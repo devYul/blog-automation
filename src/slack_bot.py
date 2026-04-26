@@ -35,6 +35,9 @@ def handle_blog(ack, respond, command):
             status="publish",
             excerpt=post_data.get("excerpt", ""),
             category_id=post_data.get("category_id", 3),
+            seo_title=post_data.get("seo_title", ""),
+            meta_description=post_data.get("meta_description", ""),
+            focus_keyword=post_data.get("focus_keyword", ""),
         )
 
         # Threads 자동 포스팅

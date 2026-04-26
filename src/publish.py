@@ -45,6 +45,9 @@ def publish_post(
     status: str = "publish",
     excerpt: str = "",
     category_id: int = 3,
+    seo_title: str = "",
+    meta_description: str = "",
+    focus_keyword: str = "",
     categories: list[int] = None,
     tags: list[int] = None,
 ) -> dict:
@@ -58,6 +61,11 @@ def publish_post(
         "status": status,  # 'publish' | 'draft'
         "excerpt": excerpt,
         "categories": [category_id],
+        "meta": {
+            "_yoast_wpseo_title": seo_title,
+            "_yoast_wpseo_metadesc": meta_description,
+            "_yoast_wpseo_focuskw": focus_keyword,
+        },
     }
     if categories:
         payload["categories"] = categories
