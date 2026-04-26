@@ -44,6 +44,7 @@ def publish_post(
     content: str,
     status: str = "publish",
     excerpt: str = "",
+    category_id: int = 3,
     categories: list[int] = None,
     tags: list[int] = None,
 ) -> dict:
@@ -56,6 +57,7 @@ def publish_post(
         "content": content,
         "status": status,  # 'publish' | 'draft'
         "excerpt": excerpt,
+        "categories": [category_id],
     }
     if categories:
         payload["categories"] = categories
