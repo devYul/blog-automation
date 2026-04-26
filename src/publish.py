@@ -3,7 +3,7 @@ import requests
 from dotenv import load_dotenv
 from generate import generate_blog_post
 
-load_dotenv()
+load_dotenv(override=True)
 
 WP_URL = os.getenv("WP_URL", "https://devyul.com")
 WP_USERNAME = os.getenv("WP_USERNAME")

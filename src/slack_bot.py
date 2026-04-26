@@ -5,10 +5,11 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from generate import generate_blog_post
+from notion_logger import log_to_dashboard
 from publish import publish_post
 from threads_post import post_to_threads
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = App(
     token=os.getenv("SLACK_BOT_TOKEN"),
@@ -39,6 +40,17 @@ def handle_blog(ack, respond, command):
             meta_description=post_data.get("meta_description", ""),
             focus_keyword=post_data.get("focus_keyword", ""),
         )
+
+        # Notion 대시보드 기록
+        try:
+            log_to_dashboard(
+                title=result["title"],
+                category=post_data.get("category", "개발 실전 기록"),
+                url=result["url"],
+                threads=True,
+            )
+        except Exception as e:
+            print(f"Notion 기록 실패 (발행은 성공): {e}")
 
         # Threads 자동 포스팅
         threads_result = None

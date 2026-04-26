@@ -4,7 +4,7 @@ import re
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 THREADS_API_BASE = "https://graph.threads.net/v1.0"
 THREADS_ACCESS_TOKEN = os.getenv("THREADS_ACCESS_TOKEN")

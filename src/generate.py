@@ -2,7 +2,7 @@ import os
 import anthropic
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 # WordPress 발행 로직 테스트용 — 크레딧 충전 후 False로 변경
 _USE_MOCK = False
@@ -244,6 +244,7 @@ def _parse_response(raw: str) -> tuple[str, str, str, str, str, str, str]:
 
 
 if __name__ == "__main__":
+    from notion_logger import log_to_dashboard
     from publish import publish_post
 
     result = generate_blog_post(
@@ -272,3 +273,14 @@ if __name__ == "__main__":
     )
     print(f"WordPress draft 발행 완료: {wp_result['url']}")
     print(f"포스트 ID: {wp_result['id']}")
+
+    try:
+        log_to_dashboard(
+            title=result["title"],
+            category=result.get("category", "개발 실전 기록"),
+            url=wp_result["url"],
+            threads=False,
+        )
+        print("Notion 대시보드 기록 완료")
+    except Exception as e:
+        print(f"Notion 기록 실패 (발행은 성공): {e}")
