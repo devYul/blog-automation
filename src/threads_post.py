@@ -10,7 +10,29 @@ THREADS_API_BASE = "https://graph.threads.net/v1.0"
 THREADS_ACCESS_TOKEN = os.getenv("THREADS_ACCESS_TOKEN")
 THREADS_USER_ID = os.getenv("THREADS_USER_ID")
 
-HASHTAGS = "#AI자동화 #개발자부업 #블로그자동화 #WordPress #Python"
+HASHTAGS = "#개발기록 #Python #자동화 #블로그개발 #사이드프로젝트"
+
+_SANITIZE_RULES = [
+    # 부업 + 조사/활용형 먼저 처리
+    (r"부업하[는기고]", "사이드 프로젝트"),
+    (r"부업으로", "사이드 프로젝트로"),
+    (r"부업을", "사이드 프로젝트를"),
+    (r"부업이", "사이드 프로젝트가"),
+    (r"부업은", "사이드 프로젝트는"),
+    (r"부업[^\s]*", "사이드 프로젝트"),
+    # 수익 관련 단어 제거
+    (r"수익\S*", ""),
+    # 자동화로 돈/수입 류 표현
+    (r"자동화로\s+(돈|수입|소득|매출)\s+\S+", "자동화 구축"),
+    # 금액 표현
+    (r"(월|일|연)\s*\d+[만천백]?\s*원", ""),
+]
+
+
+def _sanitize(text: str) -> str:
+    for pattern, repl in _SANITIZE_RULES:
+        text = re.sub(pattern, repl, text)
+    return re.sub(r"\s{2,}", " ", text).strip()
 
 
 def _strip_tags(raw: str) -> str:
@@ -48,8 +70,9 @@ def _extract_summary(content: str) -> str:
 
 
 def _build_post_text(title: str, content: str) -> str:
-    summary = _extract_summary(content)
-    return f"📝 {title}\n\n{summary}\n\n{HASHTAGS}"
+    summary = _sanitize(_extract_summary(content))
+    clean_title = _sanitize(title)
+    return f"📝 {clean_title}\n\n{summary}\n\n{HASHTAGS}"
 
 
 def _create_container(text: str, reply_to_id: str = None) -> str:
