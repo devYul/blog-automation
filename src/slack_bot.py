@@ -8,6 +8,7 @@ from generate import generate_blog_post
 from notion_logger import log_to_dashboard
 from publish import publish_post
 from threads_post import post_to_threads
+from wp_series import get_series_context
 
 load_dotenv(override=True)
 
@@ -21,15 +22,32 @@ app = App(
 def handle_blog(ack, respond, command):
     ack()  # Slack 3초 제한 내 즉시 응답
 
-    topic = command.get("text", "").strip()
-    if not topic:
-        respond("사용법: `/blog 주제`\n예) `/blog AI 자동화로 부업하는 법`")
+    text = command.get("text", "").strip()
+    if not text:
+        respond(
+            "사용법:\n"
+            "• `/blog 주제` — 기존 시리즈 이어서 작성\n"
+            "• `/blog new: 주제` — 새 시리즈 1편으로 시작\n\n"
+            "예) `/blog AI 자동화 수익 첫 달 결산`\n"
+            "예) `/blog new: 구글 애드센스 승인 도전기`"
+        )
         return
 
-    respond(f"⏳ *`{topic}`* 글 생성 중... 잠시만 기다려주세요.")
+    # new: 접두어 파싱
+    new_series = text.lower().startswith("new:")
+    topic = text[4:].strip() if new_series else text
+
+    if not topic:
+        respond("주제를 입력해주세요.\n예) `/blog new: 새 시리즈 첫 글 주제`")
+        return
+
+    mode_label = "새 시리즈 시작" if new_series else "시리즈 이어서"
+    respond(f"⏳ *`{topic}`* 글 생성 중... ({mode_label}) 잠시만 기다려주세요.")
 
     try:
-        post_data = generate_blog_post(topic)
+        series_context = None if new_series else get_series_context()
+
+        post_data = generate_blog_post(topic, series_context=series_context)
         result = publish_post(
             title=post_data["title"],
             content=post_data["content"],
@@ -66,7 +84,7 @@ def handle_blog(ack, respond, command):
 
         fields = [
             {"type": "mrkdwn", "text": f"*주제*\n{topic}"},
-            {"type": "mrkdwn", "text": f"*상태*\n발행 완료 (publish)"},
+            {"type": "mrkdwn", "text": f"*모드*\n{mode_label}"},
             {"type": "mrkdwn", "text": f"*제목*\n{result['title']}"},
             {"type": "mrkdwn", "text": f"*URL*\n{result['url']}"},
         ]
