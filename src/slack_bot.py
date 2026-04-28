@@ -26,6 +26,7 @@ _PUBLISHED = [
     {"ep": 2, "title": "WordPress + Claude API Day 1 세팅 기록 | devYul", "url": "https://devyul.com/wordpress-claude-api-blog-automation-day1/"},
     {"ep": 3, "title": "Slack 봇으로 블로그 자동 발행 트리거 만들기 — 개발자 부업 Day 2", "url": "https://devyul.com/slack-bot-blog-automation-day2/"},
     {"ep": 4, "title": "Threads API 연동으로 블로그 발행과 SNS 자동 배포 연결하기 — Day 3", "url": "https://devyul.com/threads-api-sns-auto-deploy-day3/"},
+    {"ep": 5, "title": "Notion API로 블로그 발행 기록 자동화하기 — 개발자 부업의 포트폴리오가 되는 대시보드 만들기", "url": "https://devyul.com/notion-api%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%eb%b0%9c%ed%96%89-%ea%b8%b0%eb%a1%9d-%ec%9e%90%eb%8f%99%ed%99%94%ed%95%98%ea%b8%b0-%ea%b0%9c%eb%b0%9c%ec%9e%90-%eb%b6%80%ec%97%85%ec%9d%98/"},
 ]
 
 
@@ -94,6 +95,7 @@ def handle_blog(ack, respond, command):
         episode = next_t["episode"]
         series_context = build_series_context(episode)
         mode_label = f"시리즈 {episode}편 (자동)"
+        respond(f"📋 topics.json에서 {episode}편 자동 로드: {topic}")
 
     respond(f"⏳ *`{topic}`* 글 생성 중... ({mode_label}) 잠시만 기다려주세요.")
 
