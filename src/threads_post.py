@@ -10,7 +10,7 @@ THREADS_API_BASE = "https://graph.threads.net/v1.0"
 THREADS_ACCESS_TOKEN = os.getenv("THREADS_ACCESS_TOKEN")
 THREADS_USER_ID = os.getenv("THREADS_USER_ID")
 
-HASHTAGS = "#개발기록 #Python #자동화 #블로그개발 #사이드프로젝트"
+HASHTAGS = "#개발자부업 #AI자동화"
 
 _SANITIZE_RULES = [
     # 부업 + 조사/활용형 먼저 처리
@@ -69,10 +69,10 @@ def _extract_summary(content: str) -> str:
     return summary
 
 
-def _build_post_text(title: str, content: str) -> str:
+def _build_post_text(title: str, content: str, threads_hook: str = None) -> str:
     summary = _sanitize(_extract_summary(content))
-    clean_title = _sanitize(title)
-    return f"📝 {clean_title}\n\n{summary}\n\n{HASHTAGS}"
+    first_line = _sanitize(threads_hook) if threads_hook else _sanitize(title)
+    return f"{first_line}\n\n{summary}\n\n{HASHTAGS}"
 
 
 def _create_container(text: str, reply_to_id: str = None) -> str:
@@ -108,12 +108,12 @@ def _publish_container(creation_id: str) -> str:
     return res.json()["id"]
 
 
-def post_to_threads(title: str, content: str, url: str) -> dict:
+def post_to_threads(title: str, content: str, url: str, threads_hook: str = None) -> dict:
     """Threads에 블로그 포스트를 공유합니다.
-    메인 글(제목+요약+해시태그) 발행 후 첫 번째 댓글로 링크를 답니다.
+    메인 글 발행 → 셀프 질문 댓글 → 링크 댓글 순으로 게시합니다.
 
     Returns:
-        {"id": str, "url": str, "reply_id": str, "text": str}
+        {"id": str, "url": str, "question_reply_id": str, "reply_id": str, "text": str}
     Raises:
         requests.HTTPError: API 호출 실패 시
         ValueError: 환경변수 누락 시
@@ -123,20 +123,28 @@ def post_to_threads(title: str, content: str, url: str) -> dict:
     if not THREADS_USER_ID or THREADS_USER_ID == "your_threads_user_id":
         raise ValueError("THREADS_USER_ID가 설정되지 않았습니다.")
 
-    main_text = _build_post_text(title, content)
+    main_text = _build_post_text(title, content, threads_hook)
 
     # Step 1~2: 메인 글 게시
     main_creation_id = _create_container(main_text)
     thread_id = _publish_container(main_creation_id)
 
-    # Step 3~4: 링크 댓글 게시
-    reply_text = f"📝 전체 글 보기 → {url}"
+    # Step 3~4: 셀프 질문 댓글 게시
+    question_creation_id = _create_container(
+        "이 중에 뭐가 제일 궁금하세요? 댓글로 알려주세요 👇",
+        reply_to_id=thread_id,
+    )
+    question_reply_id = _publish_container(question_creation_id)
+
+    # Step 5~6: 링크 댓글 게시
+    reply_text = f"전체 글 보기 → {url}"
     reply_creation_id = _create_container(reply_text, reply_to_id=thread_id)
     reply_id = _publish_container(reply_creation_id)
 
     return {
         "id": thread_id,
         "url": f"https://www.threads.net/@devyul/post/{thread_id}",
+        "question_reply_id": question_reply_id,
         "reply_id": reply_id,
         "text": main_text,
     }

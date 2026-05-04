@@ -101,6 +101,11 @@ def generate_and_publish(
         title=post_data["title"],
         content=post_data["content"],
         status=status,
+        excerpt=post_data.get("excerpt", ""),
+        category_id=post_data.get("category_id", 3),
+        seo_title=post_data.get("seo_title", ""),
+        meta_description=post_data.get("meta_description", ""),
+        focus_keyword=post_data.get("focus_keyword", ""),
         categories=categories,
         tags=tags,
     )

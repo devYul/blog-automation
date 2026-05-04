@@ -1,8 +1,47 @@
 [
-  {"ep": 1, "title": "AI 자동화로 개발자 부업하는 법 — 실패 3번 하고 나서야 알게 된 것들", "url": "https://devyul.com/developer-ai-automation-side-income/"},
-  {"ep": 2, "title": "WordPress + Claude API Day 1 세팅 기록 | devYul", "url": "https://devyul.com/wordpress-claude-api-blog-automation-day1/"},
-  {"ep": 3, "title": "Slack 봇으로 블로그 자동 발행 트리거 만들기 — 개발자 부업 Day 2", "url": "https://devyul.com/slack-bot-blog-automation-day2/"},
-  {"ep": 4, "title": "Threads API 연동으로 블로그 발행과 SNS 자동 배포 연결하기 — Day 3", "url": "https://devyul.com/threads-api-sns-auto-deploy-day3/"},
-  {"ep": 5, "title": "Notion API로 블로그 발행 기록 자동화하기 — 개발자 부업의 포트폴리오가 되는 대시보드 만들기", "url": "https://devyul.com/notion-api%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%eb%b0%9c%ed%96%89-%ea%b8%b0%eb%a1%9d-%ec%9e%90%eb%8f%99%ed%99%94%ed%95%98%ea%b8%b0-%ea%b0%9c%eb%b0%9c%ec%9e%90-%eb%b6%80%ec%97%85%ec%9d%98/"},
-  {"ep": 6, "title": "Windows Task Scheduler로 블로그 자동 발행 스케줄러 만들기 — 개발자 부업 Day 5", "url": "https://devyul.com/windows-task-scheduler%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99-%eb%b0%9c%ed%96%89-%ec%8a%a4%ec%bc%80%ec%a4%84%eb%9f%ac-%eb%a7%8c%eb%93%a4%ea%b8%b0-%ea%b0%9c%eb%b0%9c%ec%9e%90/"}
+  {
+    "ep": 1,
+    "title": "AI 자동화로 개발자 부업하는 법 — 실패 3번 하고 나서야 알게 된 것들",
+    "url": "https://devyul.com/developer-ai-automation-side-income/"
+  },
+  {
+    "ep": 2,
+    "title": "WordPress + Claude API Day 1 세팅 기록 | devYul",
+    "url": "https://devyul.com/wordpress-claude-api-blog-automation-day1/"
+  },
+  {
+    "ep": 3,
+    "title": "Slack 봇으로 블로그 자동 발행 트리거 만들기 — 개발자 부업 Day 2",
+    "url": "https://devyul.com/slack-bot-blog-automation-day2/"
+  },
+  {
+    "ep": 4,
+    "title": "Threads API 연동으로 블로그 발행과 SNS 자동 배포 연결하기 — Day 3",
+    "url": "https://devyul.com/threads-api-sns-auto-deploy-day3/"
+  },
+  {
+    "ep": 5,
+    "title": "Notion API로 블로그 발행 기록 자동화하기 — 개발자 부업의 포트폴리오가 되는 대시보드 만들기",
+    "url": "https://devyul.com/notion-api%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%eb%b0%9c%ed%96%89-%ea%b8%b0%eb%a1%9d-%ec%9e%90%eb%8f%99%ed%99%94%ed%95%98%ea%b8%b0-%ea%b0%9c%eb%b0%9c%ec%9e%90-%eb%b6%80%ec%97%85%ec%9d%98/"
+  },
+  {
+    "ep": 6,
+    "title": "Windows Task Scheduler로 블로그 자동 발행 스케줄러 만들기 — 개발자 부업 Day 5",
+    "url": "https://devyul.com/windows-task-scheduler%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99-%eb%b0%9c%ed%96%89-%ec%8a%a4%ec%bc%80%ec%a4%84%eb%9f%ac-%eb%a7%8c%eb%93%a4%ea%b8%b0-%ea%b0%9c%eb%b0%9c%ec%9e%90/"
+  },
+  {
+    "ep": 7,
+    "title": "블로그 SEO 최적화 실전 — Yoast SEO + 키워드 전략부터 검색 상위 노출까지 | devYul",
+    "url": "https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-seo-%ec%b5%9c%ec%a0%81%ed%99%94-%ec%8b%a4%ec%a0%84-yoast-seo-%ed%82%a4%ec%9b%8c%eb%93%9c-%ec%a0%84%eb%9e%b5%eb%b6%80%ed%84%b0-%ea%b2%80%ec%83%89-%ec%83%81/"
+  },
+  {
+    "ep": 8,
+    "title": "블로그 자동화 2주 운영 결과 공개 — 트래픽, 비용, 그리고 내가 배운 것들",
+    "url": "https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99%ed%99%94-2%ec%a3%bc-%ec%9a%b4%ec%98%81-%ea%b2%b0%ea%b3%bc-%ea%b3%b5%ea%b0%9c-%ed%8a%b8%eb%9e%98%ed%94%bd-%eb%b9%84%ec%9a%a9-%ea%b7%b8/"
+  },
+  {
+    "ep": 9,
+    "title": "쿠팡파트너스 가입부터 자동화까지 — 개발자가 수익화 채널 추가하는 실전기",
+    "url": "https://devyul.com/%ec%bf%a0%ed%8c%a1%ed%8c%8c%ed%8a%b8%eb%84%88%ec%8a%a4-%ea%b0%80%ec%9e%85%eb%b6%80%ed%84%b0-%ec%9e%90%eb%8f%99%ed%99%94%ea%b9%8c%ec%a7%80-%ea%b0%9c%eb%b0%9c%ec%9e%90%ea%b0%80-%ec%88%98/"
+  }
 ]
