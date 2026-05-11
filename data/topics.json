@@ -130,5 +130,185 @@
     ],
     "episode": 15,
     "category": "AI 자동화 부업"
+  },
+  {
+    "topic": "구글 애드센스 승인 결과 공개 — 심사 기간과 피드백 정리",
+    "keywords": [
+      "애드센스 승인",
+      "애드센스 심사 기간",
+      "블로그 수익화",
+      "애드센스 결과",
+      "개발자 부업"
+    ],
+    "episode": 16,
+    "category": "수익화 전략"
+  },
+  {
+    "topic": "WordPress 플러그인 최적화 — 블로그 속도와 SEO 개선 실전",
+    "keywords": [
+      "WordPress 플러그인",
+      "블로그 속도 최적화",
+      "WordPress SEO",
+      "페이지 속도",
+      "개발자 부업"
+    ],
+    "episode": 17,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "카카오 애드핏 도전기 — 한국형 광고 수익화 채널 추가하기",
+    "keywords": [
+      "카카오 애드핏",
+      "한국 블로그 광고",
+      "블로그 수익화",
+      "애드핏 신청",
+      "개발자 부업"
+    ],
+    "episode": 18,
+    "category": "수익화 전략"
+  },
+  {
+    "topic": "Python으로 블로그 썸네일 자동 생성 — Pillow + 템플릿 자동화",
+    "keywords": [
+      "썸네일 자동화",
+      "Python Pillow",
+      "블로그 이미지 생성",
+      "자동화 이미지",
+      "개발자 부업"
+    ],
+    "episode": 19,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "블로그 자동화 3개월 결과 공개 — 데이터로 보는 현실",
+    "keywords": [
+      "블로그 3개월 결과",
+      "자동화 블로그 수익",
+      "트래픽 분석",
+      "부업 현황",
+      "개발자 부업"
+    ],
+    "episode": 20,
+    "category": "AI 자동화 부업"
+  },
+  {
+    "topic": "구글 Search Console 활용법 — 검색 유입 데이터로 콘텐츠 전략 세우기",
+    "keywords": [
+      "구글 서치콘솔",
+      "검색 유입 분석",
+      "SEO 데이터",
+      "콘텐츠 전략",
+      "개발자 부업"
+    ],
+    "episode": 21,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "롱테일 키워드 전략 — 경쟁 없는 틈새 검색어 공략법",
+    "keywords": [
+      "롱테일 키워드",
+      "SEO 키워드 전략",
+      "블로그 검색 최적화",
+      "틈새 키워드",
+      "개발자 부업"
+    ],
+    "episode": 22,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전",
+    "keywords": [
+      "Twitter API",
+      "SNS 자동화",
+      "블로그 자동 공유",
+      "X API 연동",
+      "개발자 부업"
+    ],
+    "episode": 23,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "ChatGPT vs Claude — 블로그 글쓰기 AI 실전 비교기",
+    "keywords": [
+      "ChatGPT vs Claude",
+      "AI 글쓰기 비교",
+      "블로그 AI 도구",
+      "Claude API",
+      "개발자 부업"
+    ],
+    "episode": 24,
+    "category": "AI 자동화 부업"
+  },
+  {
+    "topic": "수익화 다각화 전략 — 전자책·강의·컨설팅으로 블로그 수익 확장하기",
+    "keywords": [
+      "블로그 수익 다각화",
+      "전자책 수익",
+      "개발자 강의",
+      "컨설팅 부업",
+      "개발자 부업"
+    ],
+    "episode": 25,
+    "category": "수익화 전략"
+  },
+  {
+    "topic": "티스토리 vs WordPress — 자동화 블로그 관점 완전 비교",
+    "keywords": [
+      "티스토리 vs 워드프레스",
+      "블로그 플랫폼 비교",
+      "WordPress 자동화",
+      "티스토리 API",
+      "개발자 부업"
+    ],
+    "episode": 26,
+    "category": "AI 자동화 부업"
+  },
+  {
+    "topic": "뉴스레터 자동화 — Mailchimp API 연동으로 구독자 관리 시스템 만들기",
+    "keywords": [
+      "Mailchimp API",
+      "뉴스레터 자동화",
+      "이메일 마케팅",
+      "구독자 관리",
+      "개발자 부업"
+    ],
+    "episode": 27,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용",
+    "keywords": [
+      "GitHub 오픈소스",
+      "블로그 자동화 코드",
+      "개발자 포트폴리오",
+      "오픈소스 공개",
+      "개발자 부업"
+    ],
+    "episode": 28,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "Google Analytics 4 연동 — 방문자 행동 데이터로 콘텐츠 개선하기",
+    "keywords": [
+      "Google Analytics 4",
+      "GA4 블로그",
+      "방문자 분석",
+      "블로그 데이터 분석",
+      "개발자 부업"
+    ],
+    "episode": 29,
+    "category": "개발 실전 기록"
+  },
+  {
+    "topic": "AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획",
+    "keywords": [
+      "자동화 부업 6개월",
+      "블로그 수익 공개",
+      "개발자 부업 현실",
+      "AI 자동화 총결산",
+      "개발자 부업"
+    ],
+    "episode": 30,
+    "category": "AI 자동화 부업"
   }
 ]
