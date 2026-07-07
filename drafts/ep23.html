@@ -1,0 +1,108 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99%ed%99%94-3%ea%b0%9c%ec%9b%94-%ea%b2%b0%ea%b3%bc-%ea%b3%b5%ea%b0%9c-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%a1%9c-%eb%b3%b4%eb%8a%94-%ed%98%84%ec%8b%a4/">20편: 블로그 자동화 3개월 결과 공개 — 데이터로 보는 현실</a></li>
+<li>📌 <a href="https://devyul.com/%ea%b5%ac%ea%b8%80-%ec%84%9c%ec%b9%98%ec%bd%98%ec%86%94-%ed%99%9c%ec%9a%a9%eb%b2%95-%ea%b2%80%ec%83%89-%ec%9c%a0%ec%9e%85-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%a1%9c-%ec%bd%98%ed%85%90%ec%b8%a0/">21편: 구글 서치콘솔 활용법 — 검색 유입 데이터로 콘텐츠 전략 세우기</a></li>
+<li>📌 <a href="https://devyul.com/%eb%a1%b1%ed%85%8c%ec%9d%bc-%ed%82%a4%ec%9b%8c%eb%93%9c-%ec%a0%84%eb%9e%b5-%ea%b2%bd%ec%9f%81-%ec%97%86%eb%8a%94-%ed%8b%88%ec%83%88-%ea%b2%80%ec%83%89%ec%96%b4%eb%a1%9c-%eb%b8%94%eb%a1%9c/">22편: 롱테일 키워드 전략 — 경쟁 없는 틈새 검색어로 블로그 검색 최적화하기</a></li>
+<li>📌 <strong>23편: Claude API 토큰 비용 0원 만들기 — API 호출 대신 Claude Code로 전환한 이유 (현재 글)</strong></li>
+<li>📌 24편: ChatGPT vs Claude — 블로그 글쓰기 AI 실전 비교기 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/%eb%a1%b1%ed%85%8c%ec%9d%bc-%ed%82%a4%ec%9b%8c%eb%93%9c-%ec%a0%84%eb%9e%b5-%ea%b2%bd%ec%9f%81-%ec%97%86%eb%8a%94-%ed%8b%88%ec%83%88-%ea%b2%80%ec%83%89%ec%96%b4%eb%a1%9c-%eb%b8%94%eb%a1%9c/">22편: 롱테일 키워드 전략 — 경쟁 없는 틈새 검색어로 블로그 검색 최적화하기</a></p>
+
+<p>Anthropic 콘솔의 사용량 페이지를 열어봤다. 글 한 편 뽑을 때마다 토큰 비용이 꼬박꼬박 쌓이고 있었다. 큰돈은 아니다. 그런데 이 블로그의 수익이 아직 그 비용을 못 넘는다는 게 문제였다. <em>부업을 한다면서 매달 적자 구조를 자동화해놓은 셈이다.</em> 솔직히 좀 웃겼다.</p>
+
+<p>그러다 문득 이상한 점을 발견했다. 나는 이미 Claude Code를 개발 작업에 매일 쓰고 있다. 정액제로. 그런데 블로그 글은 굳이 <strong>Claude API를 따로 호출</strong>해서 종량제 토큰을 태우고 있었다. 같은 모델한테 돈을 두 군데로 내고 있었던 거다.</p>
+
+<p>그래서 이번 주에 파이프라인을 뜯어고쳤다. 결론부터 말하면, <strong>글 생성에 들어가던 API 비용이 0원이 됐다.</strong> 오늘은 그 전환 과정을 기록한다.</p>
+
+<hr />
+<h2>Claude API 호출 구조의 문제 — 돈보다 더 아까웠던 것</h2>
+
+<p>기존 구조는 이랬다. Slack에서 명령을 치면 파이썬 스크립트가 Claude API를 호출해서 글을 생성하고, WordPress에 발행한 뒤 Threads와 Notion까지 연결하는 파이프라인. 3편에서 만들었던 그 시스템이다.</p>
+
+<p>돌아는 갔다. 그런데 운영하다 보니 비용 말고도 거슬리는 게 쌓였다.</p>
+
+<ul>
+<li>✅ 글 본문 생성에 한 번, Threads 훅 텍스트 생성에 또 한 번 — <strong>글 하나에 API 호출이 두 번</strong></li>
+<li>✅ 시스템 프롬프트에 페르소나·HTML 템플릿을 전부 욱여넣다 보니 프롬프트만 100줄이 넘어감</li>
+<li>✅ 응답에서 정규식으로 <code>&lt;title&gt;</code>, <code>&lt;excerpt&gt;</code> 태그를 파싱 — 형식이 조금만 어긋나면 글이 깨짐</li>
+<li>✅ 생성된 글을 발행 전에 검토할 방법이 없음 — API 응답이 곧바로 발행으로 직행</li>
+</ul>
+
+<p>특히 마지막이 컸다. 글이 이상하게 나와도 이미 발행된 뒤에야 알게 된다. 자동화랍시고 만들어놓고 결과물을 매번 사후 검수하고 있으면, 그게 자동화인가 싶었다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>API 호출 구조의 진짜 비용은 토큰이 아니라, 결과물을 통제할 수 없다는 불안이었다.</p></blockquote>
+
+<hr />
+<h2>발상의 전환 — 글쓰기와 발행을 분리하다</h2>
+
+<p>해결의 실마리는 단순한 질문에서 나왔다. <em>"파이썬이 글을 쓸 필요가 있나?"</em></p>
+
+<p>파이썬 스크립트가 잘하는 건 발행이다. WordPress REST API 호출, JWT 인증, Threads 포스팅, Notion 기록. 이건 기계적인 작업이고 파이썬이 완벽하게 처리한다. 반면 글쓰기는 Claude Code 세션 안에서 하면 된다. 나는 어차피 매일 Claude Code를 켠다. 세션 안에서 "오늘 글 써서 발행해줘" 한 마디면, Claude Code가 발행 이력을 읽고 다음 에피소드를 골라 글을 쓰고 발행 스크립트를 실행한다.</p>
+
+<p>그래서 구조를 이렇게 바꿨다.</p>
+
+<table style="border-collapse: collapse; width: 100%;" border="1">
+<thead><tr style="background: #f5f5f5;"><th style="padding: 10px;">항목</th><th style="padding: 10px;">기존 (Claude API 호출)</th><th style="padding: 10px;">전환 후 (Claude Code 작성)</th></tr></thead>
+<tbody>
+<tr><td style="padding: 10px;">글 생성 비용</td><td style="padding: 10px;">글마다 토큰 종량제 과금</td><td style="padding: 10px;"><strong>0원</strong> (기존 구독에 포함)</td></tr>
+<tr><td style="padding: 10px;">글쓰기 가이드</td><td style="padding: 10px;">100줄짜리 시스템 프롬프트 하드코딩</td><td style="padding: 10px;">WRITING_GUIDE.md 문서로 관리</td></tr>
+<tr><td style="padding: 10px;">결과물 검토</td><td style="padding: 10px;">불가 — 생성 즉시 발행</td><td style="padding: 10px;">드래프트 파일로 저장 후 발행</td></tr>
+<tr><td style="padding: 10px;">응답 파싱</td><td style="padding: 10px;">정규식으로 태그 추출 (깨지기 쉬움)</td><td style="padding: 10px;">JSON + HTML 파일 (파싱 불필요)</td></tr>
+<tr><td style="padding: 10px;">파이썬의 역할</td><td style="padding: 10px;">생성 + 발행 전부</td><td style="padding: 10px;">발행만</td></tr>
+</tbody>
+</table>
+
+<p>핵심은 <strong>드래프트 파일</strong>이다. Claude Code가 글 본문을 HTML 파일로, 제목·요약·SEO 메타·Threads 훅 텍스트를 JSON 파일로 저장한다. 발행 스크립트는 이 두 파일만 읽는다. 글쓰기와 발행 사이에 파일이라는 중간 단계가 생기니, 발행 전에 내가 원고를 열어볼 수도 있고, 발행이 실패해도 원고는 그대로 남는다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>글쓰기(Claude Code)와 발행(파이썬)을 분리하고, 그 사이에 파일을 두는 것만으로 비용과 통제 문제가 동시에 풀렸다.</p></blockquote>
+
+<hr />
+<h2>리팩토링 실전 — 걷어낸 것과 새로 만든 것</h2>
+
+<p>실제 작업은 생각보다 살벌하게 단순했다. 걷어내는 게 대부분이었기 때문이다.</p>
+
+<p>먼저 <strong>걷어낸 것들.</strong> Claude API를 호출하던 generate.py, Slack 트리거용 slack_bot.py를 legacy 폴더로 치웠다. Threads 훅 텍스트를 만들려고 Haiku 모델을 호출하던 코드도 삭제했다. 훅 텍스트도 어차피 글 쓸 때 같이 쓰면 되니까. 의존성에서 anthropic, slack-bolt 패키지가 빠지면서 requirements.txt가 두 줄이 됐다.</p>
+
+<p>다음으로 <strong>새로 만든 것.</strong> 발행 파이프라인의 진입점 하나다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>사전 준비:</strong> 아래 스크립트는 WordPress JWT 인증 정보와 Threads·Notion 토큰이 .env에 설정되어 있어야 동작합니다. 드래프트는 drafts/ 폴더에 epNN.json(메타)과 epNN.html(본문) 쌍으로 저장합니다.</p>
+
+<pre><code class="language-python"># publish_draft.py — 드래프트 파일 하나로 전체 파이프라인 실행
+draft = load_draft(draft_path)          # ep23.json + ep23.html 로드·검증
+
+if any(p["ep"] == draft["episode"] for p in load_published()):
+    raise SystemExit("이미 발행된 에피소드")   # 중복 발행 방지
+
+wp = publish_post(**draft)              # 1. WordPress 발행 (JWT)
+save_published(episode, wp)             # 2. published.json 갱신
+log_to_dashboard(wp)                    # 3. Notion 기록 (실패해도 계속)
+post_to_threads(draft["threads_text"], wp["url"])  # 4. Threads 포스팅</code></pre>
+
+<p>중복 발행 방지, Notion·Threads 실패 시에도 발행은 유지하는 예외 처리 같은 기존 시리즈에서 쌓은 설계는 전부 그대로 가져왔다. 8편에서 겪었던 중복 발행 버그를 여기서 또 겪을 수는 없으니까.</p>
+
+<p>그리고 100줄짜리 시스템 프롬프트에 박혀 있던 페르소나와 HTML 템플릿은 전부 <strong>WRITING_GUIDE.md라는 마크다운 문서</strong>로 옮겼다. Claude Code가 글을 쓰기 전에 이 문서를 읽는다. 프롬프트를 코드에 하드코딩했을 때는 수정할 때마다 파이썬 파일을 건드려야 했는데, 이제는 그냥 문서를 고치면 된다. 글쓰기 규칙이 코드가 아니라 문서가 된 것. 이게 은근히 제일 마음에 든다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> AI한테 시킬 작업의 규칙이 길어진다면, 프롬프트 문자열로 코드에 넣지 말고 마크다운 문서로 분리해보자. 버전 관리도 되고, 사람이 읽고 고치기도 쉽고, 어떤 AI 도구에서든 재사용할 수 있다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>리팩토링의 대부분은 삭제였다. 좋은 구조 변경은 코드를 늘리지 않고 줄인다.</p></blockquote>
+
+<hr />
+<h2>전환하고 느낀 것 — 자동화의 형태가 바뀌고 있다</h2>
+
+<p>전환을 마치고 나서 생각이 좀 많아졌다. 3편에서 Slack 봇을 만들었을 때 나는 "명령 한 번으로 발행까지"가 자동화의 완성형이라고 믿었다. 그런데 지금 구조는 어떤가. 명령조차 자연어다. Claude Code 세션에 "오늘 글 올려줘"라고 말하면 끝이다. 로드맵에서 다음 주제를 고르는 것도, 이전 편들과 맥락을 맞추는 것도, 글을 쓰는 것도, 스크립트를 실행하는 것도 AI가 한다.</p>
+
+<p>1년 전의 자동화가 <em>"사람이 설계한 파이프라인을 기계가 실행하는 것"</em>이었다면, 지금은 <em>"AI가 판단하고 도구를 실행하는 것"</em>에 가깝다. 파이썬 코드는 점점 얇아지고, 판단은 점점 AI 쪽으로 넘어간다. 이 블로그의 파이프라인이 그 변화를 그대로 따라가고 있다는 게 흥미롭다. 부업 기록이 어쩌다 보니 시대 기록이 되고 있다.</p>
+
+<p>물론 솔직한 평가도 남겨야 한다. 이 구조에도 트레이드오프는 있다. Slack 봇 시절에는 폰에서도 발행을 트리거할 수 있었지만, 지금은 Claude Code 세션이 있어야 한다. 완전 무인 스케줄링은 다음 숙제다. 그래도 매달 나가던 토큰 비용이 0원이 됐고, 원고가 파일로 남고, 글쓰기 규칙이 문서가 됐다. 이 정도면 남는 장사다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: ChatGPT vs Claude — 블로그 글쓰기 AI 실전 비교기</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>같은 주제로 두 AI에게 블로그 글을 쓰게 하면 무슨 일이 벌어지나</li>
+<li>글쓰기 품질, 형식 준수, 한국어 자연스러움 항목별 비교</li>
+<li>3개월 운영자가 내린 결론 — 블로그 자동화에는 어떤 AI가 맞는가</li>
+</ul>
+</div>

@@ -18,6 +18,10 @@
 Claude API를 핵심 엔진으로, WordPress·Slack·Notion·Threads를 하나의 파이프라인으로 연결하여
 **Slack 명령 한 번으로 블로그 발행까지 완전 자동화**한 시스템을 구축했습니다.
 
+> **🔄 2026-07 v2 전환:** Claude API 직접 호출(토큰 종량제)을 걷어내고, **Claude Code가 글을 직접 작성**한 뒤
+> 드래프트 파일(`drafts/epNN.json` + `epNN.html`)을 발행 스크립트에 넘기는 구조로 리팩토링했습니다.
+> 글 생성 비용 0원 + 발행 전 원고 검토 가능. 아래 v1 아키텍처 설명은 히스토리로 유지합니다.
+
 > 블로그 주제: *개발자가 AI 자동화로 부업하는 실전 기록*  
 > 운영 블로그: [devyul.com](https://devyul.com)
 
@@ -71,21 +75,34 @@ graph TD
 
 <br>
 
-## 📁 프로젝트 구조
+## 📁 프로젝트 구조 (v2)
 
 ```
 blog-automation/
 ├── src/
-│   ├── generate.py        # Claude API 호출 → 본문·excerpt·카테고리 생성
-│   ├── publish.py         # WordPress REST API 발행
+│   ├── publish_draft.py   # 메인 진입점 — 드래프트 발행 파이프라인
+│   ├── publish.py         # WordPress REST API 발행 (JWT)
 │   ├── threads_post.py    # Threads 2단계 자동 포스팅
-│   ├── slack_bot.py       # Slack 명령어 처리 및 결과 알림
-│   └── notion_logger.py   # 발행 이력 Notion DB 기록
+│   ├── notion_logger.py   # 발행 이력 Notion DB 기록
+│   └── wp_series.py       # WP 발행 글 목록 조회 유틸
+├── drafts/                # Claude Code가 작성한 원고 (epNN.json + epNN.html)
 ├── data/
 │   ├── topics.json        # 에피소드 로드맵 (발행 순서 관리)
 │   └── published.json     # 발행 이력 영속 저장 (중복 방지)
-├── CLAUDE.md
+├── legacy/                # v1 (Claude API 호출 기반 generate.py, slack_bot.py)
+├── WRITING_GUIDE.md       # 글쓰기 페르소나·스타일·HTML 템플릿 가이드
+├── CLAUDE.md              # Claude Code용 매일 발행 워크플로우
 └── .gitignore
+```
+
+### v2 파이프라인
+
+```
+Claude Code 세션: topics.json + published.json 읽고 다음 에피소드 글 작성
+    ↓  drafts/epNN.html (본문) + drafts/epNN.json (메타·Threads 훅)
+python src/publish_draft.py drafts/epNN.json
+    ↓
+WordPress 발행 → published.json 갱신 → Notion 기록 → Threads 포스팅
 ```
 
 <br>
@@ -227,7 +244,7 @@ cd blog-automation
 
 ### 2. 의존성 설치
 ```bash
-pip install anthropic requests python-dotenv
+pip install requests python-dotenv
 ```
 
 ### 3. 환경변수 설정 (.env)
@@ -244,10 +261,14 @@ pip install anthropic requests python-dotenv
 | `THREADS_ACCESS_TOKEN` | Threads API Access Token |
 | `THREADS_USER_ID` | Threads 사용자 ID |
 
-### 4. 실행
+### 4. 실행 (v2)
+
+Claude Code 세션에서 "오늘 글 써서 발행해줘"라고 하면 `CLAUDE.md` 워크플로우에 따라
+원고 작성 → 발행까지 수행합니다. 수동 실행은:
+
 ```bash
-python src/generate.py   # 콘텐츠 생성
-python src/publish.py    # WordPress 발행
+python src/publish_draft.py drafts/ep23.json           # 발행 + 이력 + Notion + Threads
+python src/publish_draft.py drafts/ep23.json --draft   # WP draft로만 (검토용)
 ```
 
 <br>

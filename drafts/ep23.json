@@ -1,0 +1,12 @@
+{
+  "episode": 23,
+  "title": "Claude API 토큰 비용 0원 만들기 — API 호출 대신 Claude Code로 전환한 이유",
+  "content_file": "ep23.html",
+  "excerpt": "글마다 토큰 비용을 내던 Claude API 호출 구조를 걷어내고, Claude Code가 직접 글을 쓰는 구조로 리팩토링했다. 글 생성 비용 0원, 드래프트 파일 검토, 문서화된 글쓰기 가이드까지 — 전환 과정과 트레이드오프를 기록한다.",
+  "category": "개발 실전 기록",
+  "category_id": 3,
+  "seo_title": "Claude API 비용 절감 — Claude Code로 블로그 자동화 전환기",
+  "meta_description": "블로그 글 생성마다 나가던 Claude API 토큰 비용을 0원으로 만든 리팩토링 기록. API 호출 대신 Claude Code가 글을 쓰고 파이썬은 발행만 하는 구조로 전환한 이유와 실전 과정, 트레이드오프까지 솔직하게 공개합니다.",
+  "focus_keyword": "Claude Code 블로그 자동화",
+  "threads_text": "블로그 글 1편 생성 비용\n\n지난달: 토큰 종량제 과금\n오늘부터: 0원\n\nAPI 호출 코드를 전부 걷어냈다.\n어차피 매일 쓰는 Claude Code한테\n글까지 쓰게 하면 되는 거였다.\n\n리팩토링의 80%는 삭제였다."
+}

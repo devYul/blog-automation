@@ -1,7 +1,6 @@
 import os
 import requests
 from dotenv import load_dotenv
-from generate import generate_blog_post
 
 load_dotenv(override=True)
 
@@ -84,40 +83,8 @@ def publish_post(
     }
 
 
-def generate_and_publish(
-    topic: str,
-    keywords: list[str] = None,
-    status: str = "publish",
-    categories: list[int] = None,
-    tags: list[int] = None,
-) -> dict:
-    """글 생성 → WordPress 발행을 한 번에 수행합니다."""
-    print(f"[1/2] Claude API로 글 생성 중... (주제: {topic})")
-    post_data = generate_blog_post(topic, keywords)
-    print(f"     제목: {post_data['title']} ({len(post_data['content'])}자)")
-
-    print("[2/2] WordPress에 발행 중...")
-    result = publish_post(
-        title=post_data["title"],
-        content=post_data["content"],
-        status=status,
-        excerpt=post_data.get("excerpt", ""),
-        category_id=post_data.get("category_id", 3),
-        seo_title=post_data.get("seo_title", ""),
-        meta_description=post_data.get("meta_description", ""),
-        focus_keyword=post_data.get("focus_keyword", ""),
-        categories=categories,
-        tags=tags,
-    )
-    print(f"     발행 완료: {result['url']}")
-
-    return {**result, "topic": topic, "keywords": keywords or []}
-
-
-if __name__ == "__main__":
-    result = generate_and_publish(
-        topic="Claude Code로 블로그 자동화 시작하기 - Day 1 세팅 기록",
-        keywords=["Claude Code", "블로그 자동화", "AI 부업", "Python", "WordPress"],
-        status="draft",
-    )
-    print(f"\n발행 결과: {result}")
+CATEGORY_ID_MAP = {
+    "AI 자동화 부업": 2,
+    "개발 실전 기록": 3,
+    "수익화 전략": 4,
+}

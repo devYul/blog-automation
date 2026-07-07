@@ -216,12 +216,12 @@
     "category": "개발 실전 기록"
   },
   {
-    "topic": "블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전",
+    "topic": "Claude API 토큰 비용 0원 만들기 — API 호출 대신 Claude Code로 블로그 자동화 전환기",
     "keywords": [
-      "Twitter API",
-      "SNS 자동화",
-      "블로그 자동 공유",
-      "X API 연동",
+      "Claude Code",
+      "블로그 자동화",
+      "API 비용 절감",
+      "AI 글쓰기",
       "개발자 부업"
     ],
     "episode": 23,
@@ -310,5 +310,17 @@
     ],
     "episode": 30,
     "category": "AI 자동화 부업"
+  },
+  {
+    "topic": "블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전",
+    "keywords": [
+      "Twitter API",
+      "SNS 자동화",
+      "블로그 자동 공유",
+      "X API 연동",
+      "개발자 부업"
+    ],
+    "episode": 31,
+    "category": "개발 실전 기록"
   }
 ]

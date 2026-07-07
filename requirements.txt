@@ -1,5 +1,6 @@
-anthropic
-flask
 python-dotenv
 requests
-slack-bolt
+
+# legacy/ (Claude API 호출 구버전) 실행 시에만 필요:
+# anthropic
+# slack-bolt
