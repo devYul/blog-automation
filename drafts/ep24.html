@@ -1,0 +1,96 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/%ea%b5%ac%ea%b8%80-%ec%84%9c%ec%b9%98%ec%bd%98%ec%86%94-%ed%99%9c%ec%9a%a9%eb%b2%95-%ea%b2%80%ec%83%89-%ec%9c%a0%ec%9e%85-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%a1%9c-%ec%bd%98%ed%85%90%ec%b8%a0/">21편: 구글 서치콘솔 활용법 — 검색 유입 데이터로 콘텐츠 전략 세우기</a></li>
+<li>📌 <a href="https://devyul.com/%eb%a1%b1%ed%85%8c%ec%9d%bc-%ed%82%a4%ec%9b%8c%eb%93%9c-%ec%a0%84%eb%9e%b5-%ea%b2%bd%ec%9f%81-%ec%97%86%eb%8a%94-%ed%8b%88%ec%83%88-%ea%b2%80%ec%83%89%ec%96%b4%eb%a1%9c-%eb%b8%94%eb%a1%9c/">22편: 롱테일 키워드 전략 — 경쟁 없는 틈새 검색어로 블로그 검색 최적화하기</a></li>
+<li>📌 <a href="https://devyul.com/claude-api-%ed%86%a0%ed%81%b0-%eb%b9%84%ec%9a%a9-0%ec%9b%90-%eb%a7%8c%eb%93%a4%ea%b8%b0-api-%ed%98%b8%ec%b6%9c-%eb%8c%80%ec%8b%a0-claude-code%eb%a1%9c-%ec%a0%84%ed%99%98%ed%95%9c-%ec%9d%b4/">23편: Claude API 토큰 비용 0원 만들기 — API 호출 대신 Claude Code로 전환한 이유</a></li>
+<li>📌 <strong>24편: ChatGPT vs Claude — 블로그 글쓰기 AI 실전 비교, 3개월 운영자의 결론 (현재 글)</strong></li>
+<li>📌 25편: 수익화 다각화 전략 — 전자책·강의·컨설팅으로 블로그 수익 확장하기 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/claude-api-%ed%86%a0%ed%81%b0-%eb%b9%84%ec%9a%a9-0%ec%9b%90-%eb%a7%8c%eb%93%a4%ea%b8%b0-api-%ed%98%b8%ec%b6%9c-%eb%8c%80%ec%8b%a0-claude-code%eb%a1%9c-%ec%a0%84%ed%99%98%ed%95%9c-%ec%9d%b4/">23편: Claude API 토큰 비용 0원 만들기 — API 호출 대신 Claude Code로 전환한 이유</a></p>
+
+<p>지난 편에서 블로그 파이프라인을 Claude Code 중심으로 갈아엎었다고 썼더니, 지인 개발자한테 바로 반박이 들어왔다. <em>"ChatGPT가 요즘 글 더 잘 쓰지 않냐? 굳이 Claude를 쓰는 이유가 뭐야?"</em></p>
+
+<p>솔직히 뜨끔했다. 나는 Claude를 <strong>비교해보고 고른 게 아니라</strong>, 그냥 개발할 때 쓰고 있어서 블로그에도 그대로 쓴 거였다. 3개월 동안 20편 넘게 발행하면서 정작 도구 검증을 한 번도 안 한 셈이다. 자동화 블로그 운영자가 이러면 안 되지 싶었다.</p>
+
+<p>그래서 이번 주에 작정하고 실험을 했다. <strong>같은 주제, 같은 가이드 문서, 같은 조건</strong>으로 ChatGPT와 Claude에게 각각 블로그 글을 쓰게 하고, 3개월 운영하며 쌓인 기준으로 채점했다. 결과는 생각보다 명확하게 갈렸다.</p>
+
+<hr />
+<h2>실험 설계 — 같은 조건에서 붙여야 공정하다</h2>
+
+<p>AI 글쓰기 비교 글은 많지만, 대부분 "한 번 시켜보니 이렇더라" 수준이다. 나는 실제 운영 조건을 그대로 재현하고 싶었다. 그래서 조건을 이렇게 고정했다.</p>
+
+<ul>
+<li>✅ 주제 동일: "블로그 방문자 데이터로 콘텐츠 개선하기" (실제 로드맵에 있던 주제)</li>
+<li>✅ 입력 동일: 내 블로그의 글쓰기 가이드 문서(페르소나·HTML 템플릿·분량 규칙) 전문을 그대로 제공</li>
+<li>✅ 요구사항 동일: 순수 텍스트 2500자 이상, 지정 HTML 템플릿 준수, SEO 메타 5종 출력</li>
+<li>✅ 기회 동일: 각 모델당 첫 응답 1회만 평가 (재생성 없음 — 자동화에선 첫 결과가 곧 발행물이니까)</li>
+</ul>
+
+<p>채점 항목은 5가지. 3개월 운영하면서 "이게 안 되면 내가 손대야 한다"고 뼈저리게 느낀 것들만 골랐다. 형식 준수, 분량 준수, 한국어 자연스러움, 페르소나 유지, 그리고 <strong>사실 지어내지 않기</strong>.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>자동화 파이프라인에서 AI 글쓰기 평가 기준은 "잘 쓰나"가 아니라 "내가 손 안 대도 되나"다.</p></blockquote>
+
+<hr />
+<h2>결과 비교 — 다섯 항목에서 명확하게 갈렸다</h2>
+
+<p>결과부터 표로 정리한다. 며칠 써보고 내린 인상 비평이 아니라, 두 결과물을 나란히 놓고 항목별로 확인한 내용이다.</p>
+
+<table style="border-collapse: collapse; width: 100%;" border="1">
+<thead><tr style="background: #f5f5f5;"><th style="padding: 10px;">평가 항목</th><th style="padding: 10px;">ChatGPT</th><th style="padding: 10px;">Claude</th></tr></thead>
+<tbody>
+<tr><td style="padding: 10px;">HTML 템플릿 준수</td><td style="padding: 10px;">템플릿 일부를 자기 스타일로 변형 (인덱스 박스 구조 변경, 인라인 스타일 누락)</td><td style="padding: 10px;">가이드 문서의 템플릿을 거의 그대로 재현</td></tr>
+<tr><td style="padding: 10px;">분량 (2500자 이상)</td><td style="padding: 10px;">약 1800자 — 요구보다 짧게 마무리</td><td style="padding: 10px;">약 3100자 — 기준 충족</td></tr>
+<tr><td style="padding: 10px;">한국어 자연스러움</td><td style="padding: 10px;">매끄럽지만 문어체·상투어가 종종 ("~하는 것이 중요합니다" 반복)</td><td style="padding: 10px;">구어체 유지가 더 안정적, 다만 가끔 문장이 길어짐</td></tr>
+<tr><td style="padding: 10px;">페르소나 유지</td><td style="padding: 10px;">중반부터 일반 정보성 블로그 톤으로 이탈</td><td style="padding: 10px;">1인칭 경험담 톤을 끝까지 유지</td></tr>
+<tr><td style="padding: 10px;">사실 지어내기</td><td style="padding: 10px;">가짜 방문자 수치·날짜를 구체적으로 생성 ("3월 방문자 1,247명")</td><td style="padding: 10px;">수치가 필요한 자리를 일반 서술로 처리, 지어낸 수치 없음</td></tr>
+</tbody>
+</table>
+
+<p>가장 크게 갈린 건 마지막 항목이었다. ChatGPT는 내가 주지도 않은 방문자 통계를 소수점까지 그럴듯하게 만들어냈다. 읽기엔 설득력 있어 보이는데, <strong>이 블로그는 실제 운영 기록이라 지어낸 숫자가 하나라도 들어가면 신뢰가 무너진다.</strong> 자동 발행 구조에서는 발행 전에 내가 이걸 잡아낼 기회도 없다. 이건 나한테는 탈락 사유급 문제였다.</p>
+
+<p>반대로 ChatGPT가 앞선 부분도 분명히 있었다. 서론 훅은 ChatGPT 쪽이 더 감각적이었고, 소제목 뽑는 센스도 좋았다. 브레인스토밍이나 제목 A/B 후보 뽑기라면 ChatGPT를 쓰는 게 낫겠다는 생각이 들 정도로.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>ChatGPT는 "더 매력적인 글", Claude는 "더 시키는 대로 쓰는 글". 자동화에서 치명적인 건 매력 부족이 아니라 지시 이탈이다.</p></blockquote>
+
+<hr />
+<h2>왜 이런 차이가 날까 — 긴 가이드 문서를 대하는 태도</h2>
+
+<p>차이의 핵심은 글솜씨가 아니라 <strong>긴 지시문을 대하는 태도</strong>에 있다고 본다. 내 글쓰기 가이드는 페르소나 설정, 글 구조, HTML 템플릿까지 포함해 문서 하나가 통째로 들어간다. 이걸 ChatGPT는 "참고 자료"처럼 소화해서 자기 방식으로 재해석했고, Claude는 "사양서"처럼 받아들여 항목 하나하나를 따랐다.</p>
+
+<p>일반 사용자에게는 재해석이 장점일 수 있다. 대충 말해도 알아서 예쁘게 만들어주니까. 하지만 자동화 파이프라인에서는 정반대다. 내 발행 스크립트는 드래프트의 HTML 구조와 메타 필드 형식이 정확해야 그대로 발행할 수 있다. 창의적인 재해석은 곧 파싱 실패, 발행 실패다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>사전 준비:</strong> 아래는 실험에서 두 모델에게 동일하게 준 요구사항 블록이다. 이런 "검증 가능한 조건"을 명시해두면 모델별 준수율을 객관적으로 비교할 수 있다.</p>
+
+<pre><code class="language-text">[공통 요구사항]
+- 분량: HTML 태그 제외 순수 텍스트 2500자 이상
+- 구조: 시리즈 인덱스 박스 → 서론 → hr+h2 섹션(각 섹션 끝 blockquote) → 결론
+- 출력: title / excerpt(120~160자) / seo_title(60자 이내) /
+        meta_description(120~155자) / focus_keyword
+- 금지: 제공되지 않은 통계·수치·날짜를 만들어내지 말 것</code></pre>
+
+<p>재미있는 건, "지어내지 말 것"을 명시했는데도 ChatGPT는 수치를 만들었다는 점이다. 금지 조항보다 "그럴듯한 글"을 우선한 것이다. 이게 바로 내가 매일 발행 자동화에서 제일 무서워하는 실패 모드다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> AI에게 글을 맡길 때는 "잘 써줘"가 아니라 검증 가능한 조건(분량, 구조, 금지사항)을 목록으로 주고, 결과물을 조건별로 채점해보자. 도구 선택이 취향 문제에서 데이터 문제로 바뀐다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>자동화용 AI를 고르는 기준은 최고 성능이 아니라 최저 사고율이다.</p></blockquote>
+
+<hr />
+<h2>3개월 운영자의 결론 — 그래서 뭘 쓰라는 건가</h2>
+
+<p>내 결론은 이렇다. <strong>매일 자동 발행되는 본문은 Claude, 아이디어와 제목 후보는 ChatGPT.</strong> 나처럼 가이드 문서 기반으로 무인 발행하는 구조라면 지시 준수율과 사실 안정성이 깡패다. 반면 사람이 직접 검토하고 다듬는 반자동 블로그라면 ChatGPT의 감각적인 초안도 충분히 매력적인 선택지다.</p>
+
+<p>그리고 하나 고백하자면, 이 실험을 하고 나서야 내 선택에 확신이 생겼다. 그동안은 "쓰던 거라서" 썼다면, 지금은 "검증해봤더니 내 구조에 맞아서" 쓴다. 부업 시스템의 도구는 유행이 아니라 자기 파이프라인 기준으로 골라야 한다는 걸, 3개월 만에 제대로 배웠다.</p>
+
+<p>물론 이 결과는 내 파이프라인 기준이다. 두 모델 모두 빠르게 업데이트되니 6개월 뒤엔 결과가 뒤집힐 수도 있다. 그때 가서 다시 붙여보고, 뒤집히면 뒤집혔다고 솔직하게 쓰겠다. 그게 이 시리즈의 컨셉이니까.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: 수익화 다각화 전략 — 전자책·강의·컨설팅으로 블로그 수익 확장하기</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>광고 수익만으로는 부족한 이유 — 3개월 데이터가 말해준 것</li>
+<li>개발자 블로그가 확장할 수 있는 수익 채널 3가지 비교</li>
+<li>첫 번째로 시도할 채널과 그 이유</li>
+</ul>
+</div>
