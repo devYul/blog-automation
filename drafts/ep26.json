@@ -1,0 +1,12 @@
+{
+  "episode": 26,
+  "title": "티스토리 vs WordPress — 자동화 블로그 관점 완전 비교",
+  "content_file": "ep26.html",
+  "excerpt": "2023년 티스토리 API가 막히면서 WordPress로 옮긴 이유를 제대로 정리했다. 자동화 블로그를 운영하는 개발자라면 반드시 알아야 할 API 지원, 자동화 범위, SEO, 비용 차이를 실전 경험으로 비교한다.",
+  "category": "AI 자동화 부업",
+  "category_id": 2,
+  "seo_title": "티스토리 vs WordPress 자동화 블로그 완전 비교 — 개발자 관점",
+  "meta_description": "티스토리 API 폐기 이후 WordPress로 전환한 이유를 실전 경험으로 비교. API 지원·자동화 범위·SEO·비용을 기준으로 자동화 블로그 플랫폼 선택 가이드를 정리했다.",
+  "focus_keyword": "티스토리 vs WordPress 자동화",
+  "threads_text": "티스토리로 자동화 블로그 하려다\n\n2023년 API 막혔습니다.\n\n그 이후로 WordPress만 씁니다.\n\n자동화 개발자라면 플랫폼 선택이 전부입니다."
+}
