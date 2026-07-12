@@ -1,0 +1,139 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/chatgpt-vs-claude-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ea%b8%80%ec%93%b0%ea%b8%b0-ai-%ec%8b%a4%ec%a0%84-%eb%b9%84%ea%b5%90-3%ea%b0%9c%ec%9b%94-%ec%9a%b4%ec%98%81%ec%9e%90%ec%9d%98-%ea%b2%b0/">24편: ChatGPT vs Claude — 블로그 글쓰기 AI 실전 비교, 3개월 운영자의 결론</a></li>
+<li>📌 <a href="https://devyul.com/%ec%88%98%ec%9d%b5%ed%99%94-%eb%8b%a4%ea%b0%81%ed%99%94-%ec%a0%84%eb%9e%b5-%ec%a0%84%ec%9e%90%ec%b1%85%c2%b7%ea%b0%95%ec%9d%98%c2%b7%ec%bb%a8%ec%84%a4%ed%8c%85%ec%9c%bc%eb%a1%9c-%eb%b8%94/">25편: 수익화 다각화 전략 — 전자책·강의·컨설팅으로 블로그 수익 확장하기</a></li>
+<li>📌 <a href="https://devyul.com/%ed%8b%b0%ec%8a%a4%ed%86%a0%eb%a6%ac-vs-wordpress-%ec%9e%90%eb%8f%99%ed%99%94-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ea%b4%80%ec%a0%90-%ec%99%84%ec%a0%84-%eb%b9%84%ea%b5%90/">26편: 티스토리 vs WordPress — 자동화 블로그 관점 완전 비교</a></li>
+<li>📌 <strong>27편: 뉴스레터 자동화 — Mailchimp API 연동으로 구독자 관리 시스템 만들기 (현재 글)</strong></li>
+<li>📌 28편: 블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/%ed%8b%b0%ec%8a%a4%ed%86%a0%eb%a6%ac-vs-wordpress-%ec%9e%90%eb%8f%99%ed%99%94-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ea%b4%80%ec%a0%90-%ec%99%84%ec%a0%84-%eb%b9%84%ea%b5%90/">26편: 티스토리 vs WordPress — 자동화 블로그 관점 완전 비교</a></p>
+
+<p>솔직히 말하면, 트래픽 숫자가 올라가는 게 기뻤다가, 어느 순간 공허해졌다.</p>
+
+<p>구글 서치콘솔을 켜면 일 방문자가 조금씩 늘고 있는 건 사실이다. 근데 그 사람들이 글 하나 읽고 다시는 안 온다는 걸 알아버렸다. 검색으로 찾아온 사람은 원하는 정보를 얻으면 탭을 닫고 사라진다. 내가 다음 글을 써도 그 사람이 볼 방법이 없다. SNS 자동 포스팅도 연결해뒀는데, 팔로워가 없으면 Threads 글이 허공에 뜨는 것과 마찬가지다.</p>
+
+<p>그때 떠오른 게 이메일 뉴스레터였다. 블로그에 구독 폼 하나 넣어두면, 독자가 이메일을 남기고, 내가 글을 발행할 때마다 알림이 간다. 한 번 구독한 사람은 내가 굳이 채널을 키우지 않아도 된다. Mailchimp 무료 플랜이 구독자 500명까지 지원한다는 걸 확인하고 바로 시작했다.</p>
+
+<hr />
+<h2>방문자가 다시 오지 않는 문제 — 블로그 트래픽의 구조적 한계</h2>
+
+<p>검색 유입의 본질은 "필요할 때 찾아오는 사람"이다. 원하는 정보를 얻으면 볼일이 없어진다. 재방문률이 낮은 건 내 글이 별로여서가 아니라, 검색 유입의 속성 자체가 그렇다. 이걸 이해하는 데 시간이 좀 걸렸다.</p>
+
+<p>SNS는 다르다. Threads에 자동 포스팅을 연결해뒀는데, 문제는 팔로워가 없으면 노출이 제로라는 것이다. 팔로워를 모으려면 또 꾸준히 SNS 활동을 해야 하는데, 그게 또 일이다. 결국 "고정 독자"를 만드는 가장 직접적인 방법은 이메일 구독이라는 결론에 닿았다.</p>
+
+<p>이메일 구독자의 특성은 명확하다. 이메일 주소를 남겼다는 건 진짜로 관심 있다는 신호다. 검색 유입처럼 스쳐 지나가는 사람이 아니다. 오픈율이 20~30%만 돼도 검색 유입보다 훨씬 충성도 높은 독자다. 수익화 전환율도 다르다.</p>
+
+<p>Mailchimp를 선택한 이유는 간단하다. 무료 플랜으로 구독자 500명까지 관리 가능하고, 월 1,000건 이메일 발송이 무료다. 내 블로그 규모에서 500명 구독자면 꽤 먼 목표다. 당장 비용 없이 시작할 수 있다는 게 중요했다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>검색 유입은 일회성이고, 이메일 구독자는 자산이다. 팔로워 0인 SNS보다 구독자 50명이 더 강력하다.</p></blockquote>
+
+<hr />
+<h2>Mailchimp 가입과 API 키 발급 — 10분이면 준비 완료</h2>
+
+<p>가입 자체는 어렵지 않다. mailchimp.com에서 이메일 주소로 가입하고 인증 메일 확인하면 끝이다. 가입 직후 "Audience(청중)" 하나가 자동으로 만들어진다. 이게 구독자 목록이다. 이름을 "devYul 블로그 구독자"로 바꿔뒀다.</p>
+
+<p>API 키 발급은 다음 경로로 찾아가면 된다. 우측 상단 프로필 아이콘 → Account &amp; billing → Extras → API keys → Create A Key. 키 이름은 "blog-automation" 정도로 적당히 붙이면 된다. 생성된 키는 딱 한 번만 화면에 표시되기 때문에 반드시 그 자리에서 복사해서 .env 파일에 넣어야 한다.</p>
+
+<p>주의해야 할 게 하나 있다. Mailchimp API는 서버 위치(데이터센터)에 따라 엔드포인트가 달라진다. 내 계정이 us1인지 us2인지 확인해야 한다. API 키를 보면 끝에 "-us1", "-us2" 같은 접미사가 붙어 있다. 이게 server prefix다. API 호출할 때 URL을 `https://us1.api.mailchimp.com/3.0/` 이런 식으로 구성해야 한다. 이걸 빠뜨리면 404만 나온다. 처음에 30분 삽질했다.</p>
+
+<p>Audience ID도 필요하다. Audience 탭에서 구독자 목록을 선택하고, Settings → Audience name and defaults로 들어가면 Audience ID가 있다. 이것도 .env에 저장해두면 된다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> .env 파일에 MAILCHIMP_API_KEY, MAILCHIMP_SERVER_PREFIX, MAILCHIMP_LIST_ID 세 가지를 저장해두면 이후 모든 API 호출에서 재사용할 수 있다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>API 키 발급보다 server prefix를 빠뜨리는 게 더 자주 나는 실수다. 키 끝에 붙은 "-us1" 같은 부분을 반드시 별도로 저장하라.</p></blockquote>
+
+<hr />
+<h2>Python으로 Mailchimp API 연동하기 — 구독자 추가와 목록 조회</h2>
+
+<p>Mailchimp 공식 Python 라이브러리가 있긴 한데, 프로젝트 의존성을 최소화하고 싶었다. requests만으로 충분히 된다. 이미 프로젝트에 있는 라이브러리라 추가 설치도 필요 없었다.</p>
+
+<p>먼저 구독자를 추가하는 기본 흐름이다. Mailchimp API는 이메일 주소를 MD5 해시로 변환해서 member를 식별한다. 구독자 추가는 PUT 요청으로 처리하는데, 이미 있는 이메일이면 업데이트, 없으면 추가가 되는 방식이라 중복 걱정이 없다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>사전 준비:</strong> .env 파일에 MAILCHIMP_API_KEY, MAILCHIMP_SERVER_PREFIX, MAILCHIMP_LIST_ID가 설정되어 있어야 합니다.</p>
+
+<pre><code class="language-python">import hashlib
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("MAILCHIMP_API_KEY")
+SERVER = os.getenv("MAILCHIMP_SERVER_PREFIX")  # 예: "us1"
+LIST_ID = os.getenv("MAILCHIMP_LIST_ID")
+
+def add_subscriber(email, first_name=""):
+    email_hash = hashlib.md5(email.lower().encode()).hexdigest()
+    url = f"https://{SERVER}.api.mailchimp.com/3.0/lists/{LIST_ID}/members/{email_hash}"
+    payload = {
+        "email_address": email,
+        "status": "subscribed",
+        "merge_fields": {"FNAME": first_name}
+    }
+    res = requests.put(url, json=payload, auth=("anystring", API_KEY))
+    return res.status_code, res.json()
+
+# 테스트
+status, data = add_subscriber("test@example.com", "테스터")
+print(status, data.get("status"))</code></pre>
+
+<p>이 코드를 src/mailchimp_helper.py로 저장해뒀다. 주의할 점이 있다. requests 인증에서 사용자명은 아무 문자열이나 써도 된다. Mailchimp API는 비밀번호 자리에 있는 API 키만 실제로 검증한다. "anystring"이라고 써도 작동한다. 처음엔 이 부분이 이상해서 한참 찾아봤다.</p>
+
+<p>구독자 목록을 조회할 때는 GET 요청을 쓰면 된다. 페이지네이션 파라미터(count, offset)를 이용해서 전체 목록을 순회할 수 있다. 무료 플랜 500명 수준에서는 한 번 요청으로 다 가져올 수 있어서 복잡한 페이지네이션은 당장 필요 없다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>Mailchimp API 인증은 Basic Auth인데, 사용자명은 뭐든 상관없고 패스워드 자리에 API 키를 넣는 방식이다. 공식 문서를 잘 읽어야 헷갈리지 않는다.</p></blockquote>
+
+<hr />
+<h2>WordPress 발행 → 뉴스레터 자동 발송 연결 시도기</h2>
+
+<p>이 부분이 가장 야심찼고, 가장 많이 막힌 부분이다. 글을 발행하면 자동으로 구독자들에게 이메일이 가는 구조를 만들고 싶었다. 결론부터 말하면, 완전 자동 발송은 Mailchimp 유료 플랜 기능이라 무료로는 안 된다.</p>
+
+<p>Mailchimp API에서 캠페인을 생성하고(Campaign create), 콘텐츠를 설정하고(Campaign content), 발송을 예약하는(Campaign schedule or send) 3단계 흐름은 무료 플랜에서도 API로 호출 가능하다. 근데 "자동화(Automations)" 기능 — 예를 들어 새 글이 올라오면 자동으로 RSS 이메일이 나가는 기능 — 은 유료 플랜에서만 된다.</p>
+
+<p>그래서 방향을 약간 틀었다. publish_draft.py가 실행될 때 Mailchimp API를 호출해서 캠페인을 생성하고 즉시 발송하는 방식으로 연결했다. 완전히 자동화된 "새 글 알림 이메일"이 만들어진다. 단순하지만 목적은 달성된다.</p>
+
+<p>실제로 구현해보니 한 가지 문제가 더 있었다. 캠페인을 발송하려면 Mailchimp 대시보드에서 "From 이름"과 "Reply-to 이메일"을 사전에 설정하고 인증까지 받아야 한다. devyul.com 도메인 이메일이 없어서 Gmail을 썼더니 스팸 필터에 걸릴 수 있다는 경고가 떴다. 도메인 이메일을 만들거나, 일단 테스트 구독자한테만 발송하는 식으로 우회했다.</p>
+
+<p>WordPress 자체에는 구독 폼을 추가했다. WPForms 무료 플러그인으로 이름·이메일 입력 폼을 만들고, 제출 시 Mailchimp에 구독자가 추가되도록 연결했다. Mailchimp 공식 WordPress 플러그인(Mailchimp for WordPress)을 쓰면 더 쉬운데, 플러그인을 최소화하는 방침이어서 WPForms 웹훅으로 직접 연결했다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> Mailchimp 캠페인 발송 전에는 반드시 "From" 도메인 인증(SPF/DKIM)을 완료해야 한다. 안 하면 발송은 되더라도 스팸으로 분류될 확률이 높다. 도메인 이메일을 만들 여건이 안 된다면 Mailchimp의 mandrill 주소를 from으로 쓰는 방식도 있다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>자동화(Automations)는 유료지만, API로 캠페인을 생성해서 즉시 발송하는 건 무료 플랜에서도 가능하다. 발행 파이프라인에 끼워 넣으면 실질적인 자동화가 된다.</p></blockquote>
+
+<hr />
+<h2>2주 운영 결과 — 솔직한 현실과 내가 배운 것</h2>
+
+<p>2주 동안 운영한 결과를 공개하자면, 구독자는 아직 6명이다. 기대에 비하면 초라하지만, 솔직히 6명이 대단하게 느껴지기도 한다. 글을 읽고 이메일 주소를 남길 만큼 믿음이 생긴 사람이 6명이라는 뜻이다. 구독자 10명이 되면 진짜 뿌듯할 것 같다.</p>
+
+<p>깨달은 것이 있다. 구독자를 모으는 건 SEO보다 훨씬 어렵다. 검색 유입은 구글이 알아서 데려다주지만, 구독자는 독자가 직접 폼을 찾아서 입력해야 한다. 구독 폼의 위치와 복사(카피라이팅)가 생각보다 중요하다. "무료 뉴스레터 구독"보다 "새 글 알림 받기"가 클릭률이 더 높다는 걸 A/B 테스트 없이 직관적으로 바꿨는데, 반응이 좀 더 나은 것 같다.</p>
+
+<p>이메일 오픈율은 아직 측정 못했다. 구독자 6명한테 발송한 이메일 오픈 통계를 보려면 Mailchimp 대시보드에서 캠페인 리포트를 확인하면 되는데, 통계가 의미 있으려면 좀 더 쌓여야 한다. 한 달 뒤에 다시 공개하겠다.</p>
+
+<p>그럼에도 불구하고 인프라를 갖춰두는 게 의미 있다. 이메일 채널은 알고리즘에 의존하지 않는다. 구글이 내 블로그를 검색 결과에서 내려도, Threads 알고리즘이 내 글을 안 보여줘도, 이메일 구독자한테는 직접 도달할 수 있다. 지금 당장 효과가 작더라도, 채널 자체를 유지하는 게 장기적으로 맞는 방향이다.</p>
+
+<p>Threads + Notion + WordPress + Mailchimp, 이렇게 파이프라인이 하나 더 붙었다. Python 코드는 100줄도 안 된다. 비용은 0원이다. 이 조합이 6개월 뒤에 어떤 결과를 만들지 솔직히 궁금하다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>이메일 구독자 6명이 초라해 보여도, 알고리즘 없이 직접 닿는 채널이 생긴 것이다. 숫자보다 채널 자체를 갖추는 게 먼저다.</p></blockquote>
+
+<hr />
+<h2>마무리 — 자동화 파이프라인에 이메일 채널을 더했다</h2>
+
+<p>이번 작업을 정리하면 이렇다. Mailchimp API 키를 발급받고, Python으로 구독자 추가·캠페인 발송 코드를 만들고, 발행 파이프라인에 끼워 넣었다. WordPress에는 구독 폼을 추가했다. 총 작업 시간은 반나절 정도였다.</p>
+
+<p>고생한 부분은 두 군데다. server prefix를 빠뜨려서 API가 안 된 것, 그리고 도메인 이메일이 없어서 발송 시 스팸 경고가 뜬 것. 둘 다 30분에서 1시간 사이에 해결했다.</p>
+
+<p>구독자 6명이 실망스러울 수도 있는데, 나는 오히려 만족한다. 블로그 방문자 대비 구독 전환이 아직 작은 건 맞다. 하지만 이 인프라가 없으면 절대 0명이다. 6명은 0명보다 훨씬 낫다. 다음 달에는 구독 폼 위치와 카피라이팅을 다듬어볼 생각이다.</p>
+
+<p>다음 편은 이 블로그 자동화 코드 전체를 GitHub에 공개하는 이야기다. 오픈소스로 올리면 포트폴리오도 되고, 다른 개발자들이 쓰다가 이슈를 올려주면 코드가 더 견고해진다는 기대가 있다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: 블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>GitHub 리포지토리 공개 준비 — 민감 정보 제거와 README 작성</li>
+<li>개발자 포트폴리오로 활용하는 방법</li>
+<li>오픈소스 공개 후 실제 반응과 Star 수 변화</li>
+</ul>
+</div>

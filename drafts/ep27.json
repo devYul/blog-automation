@@ -1,0 +1,12 @@
+{
+  "episode": 27,
+  "title": "뉴스레터 자동화 — Mailchimp API 연동으로 구독자 관리 시스템 만들기",
+  "content_file": "ep27.html",
+  "excerpt": "블로그 방문자가 한 번 읽고 사라지는 문제를 이메일 뉴스레터로 해결하려 했다. Mailchimp 무료 플랜과 Python requests만으로 구독자 추가, 캠페인 발송, 발행 파이프라인 연결까지 반나절 만에 구현한 실전 기록.",
+  "category": "개발 실전 기록",
+  "category_id": 3,
+  "seo_title": "Mailchimp API 연동 뉴스레터 자동화 — Python으로 구독자 관리 시스템 만들기",
+  "meta_description": "Mailchimp API와 Python requests로 블로그 뉴스레터를 자동화한 실전 기록. 구독자 추가·캠페인 발송·WordPress 발행 파이프라인 연결까지 무료로 구현하는 방법을 단계별로 공개합니다.",
+  "focus_keyword": "Mailchimp API 뉴스레터 자동화",
+  "threads_text": "블로그 방문자가 다시 안 온다\n\n검색 유입: 한 번 읽고 끝\nSNS 노출: 팔로워 없으면 제로\n이메일 구독자: 직접 도달 가능\n\n2주 운영 결과 — 구독자 6명\n초라해 보여도 0명보다 낫다"
+}
