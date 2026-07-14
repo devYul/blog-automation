@@ -1,0 +1,89 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/%eb%89%b4%ec%8a%a4%eb%a0%88%ed%84%b0-%ec%9e%90%eb%8f%99%ed%99%94-mailchimp-api-%ec%97%b0%eb%8f%99%ec%9c%bc%eb%a1%9c-%ea%b5%ac%eb%8f%85%ec%9e%90-%ea%b4%80%eb%a6%ac-%ec%8b%9c%ec%8a%a4%ed%85%9c/">27편: 뉴스레터 자동화 — Mailchimp API 연동으로 구독자 관리 시스템 만들기</a></li>
+<li>📌 <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99%ed%99%94-%ec%bd%94%eb%93%9c-%ec%98%a4%ed%94%88%ec%86%8c%ec%8a%a4%ed%99%94-github-%ea%b3%b5%ea%b0%9c%ec%99%80-%ed%8f%ac%ed%8a%b8%ed%8f%b4/">28편: 블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용</a></li>
+<li>📌 <strong>29편: Google Analytics 4 연동 실전 — 방문자 데이터로 콘텐츠 전략 바꾼 이야기 (현재 글)</strong></li>
+<li>📌 30편: AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99%ed%99%94-%ec%bd%94%eb%93%9c-%ec%98%a4%ed%94%88%ec%86%8c%ec%8a%a4%ed%99%94-github-%ea%b3%b5%ea%b0%9c%ec%99%80-%ed%8f%ac%ed%8a%b8%ed%8f%b4/">28편: 블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용</a></p>
+
+<p>솔직히 말하면, 나는 Google Analytics 4 연동을 세 달 가까이 미뤘다. "어차피 방문자도 별로 없는데 무슨 분석이냐"는 핑계가 있었고, 설정 화면이 낯설어 보여서 "나중에 하지 뭐" 하고 탭을 닫기 일쑤였다. 그냥 WordPress 기본 통계에 나오는 방문자 숫자만 흘낏 보는 게 전부였다.</p>
+
+<p>그러다 블로그 자동화 3개월 결산을 준비하면서 진지하게 GA4를 들여다봤더니, 충격이었다. 내가 열심히 썼다고 생각했던 글들이 30초도 안 돼서 이탈되고 있었고, 거의 신경 안 쓰고 빠르게 써낸 글이 오히려 체류 시간이 3분을 넘겼다. 직관이 얼마나 틀릴 수 있는지 데이터로 확인한 순간이었다.</p>
+
+<p>이번 글에서는 GA4를 WordPress에 연동한 과정, 그리고 실제로 데이터를 보고 콘텐츠 전략을 어떻게 바꿨는지를 솔직하게 기록한다.</p>
+
+<hr />
+<h2>GA4 계정 만들기 — 처음엔 헷갈린다, 이 순서가 핵심이다</h2>
+
+<p>Google Analytics를 처음 쓰는 사람이라면 가장 먼저 헷갈리는 게 "계정"과 "속성(Property)"의 구분이다. 나도 처음에 계정을 두 개 만들어버리는 실수를 했다. 정리하자면 이렇다. 계정은 그냥 최상위 컨테이너고, 속성이 실제로 추적할 웹사이트 단위다. 계정 하나에 속성 여러 개를 묶을 수 있다.</p>
+
+<p>Google Analytics(analytics.google.com)에 접속해서 "측정 시작"을 누르면 계정 이름을 입력하는 화면이 나온다. 나는 "devYul 블로그"라고 입력했다. 그다음 속성 이름은 "devyul.com"으로 설정하고, 보고 시간대를 대한민국, 통화를 원화(KRW)로 바꿨다. 이 시간대 설정은 나중에 트래픽 패턴을 분석할 때 결정적으로 중요하다. 기본값이 미국 시간대로 되어 있어서 그냥 넘기면 데이터 해석이 꼬인다.</p>
+
+<p>비즈니스 세부정보에서는 업종을 "온라인 커뮤니티"로 고르고 비즈니스 목표는 "리드 생성 및 사용자 획득"을 선택했다. 이 선택이 기본 보고서 화면 구성에 영향을 준다고 하더라. 그다음 플랫폼 선택에서 "웹"을 고르면 데이터 스트림 설정 화면이 나온다. 여기서 내 블로그 URL(https://devyul.com)을 입력하면 "측정 ID"가 생성된다. G-XXXXXXXXXX 형태의 이 아이디가 WordPress에 심어야 할 코드의 핵심이다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>시간대를 반드시 한국(서울)으로 설정할 것 — 나중에 바꾸면 과거 데이터와 단절이 생긴다.</p></blockquote>
+
+<hr />
+<h2>WordPress 연동 — Site Kit vs 직접 코드 삽입, 나의 선택</h2>
+
+<p>GA4 측정 ID를 받았으면 WordPress에 심어야 한다. 방법이 크게 두 가지다. 첫 번째는 Google에서 공식 제공하는 Site Kit by Google 플러그인을 쓰는 것이고, 두 번째는 functions.php에 gtag 스크립트를 직접 넣는 것이다.</p>
+
+<p>나는 처음에 직접 코드를 넣으려다가 포기하고 Site Kit으로 갔다. 이유는 단순했다. functions.php를 건드리다가 워낙 실수를 많이 해봤기 때문이다. 이전에 WordPress 플러그인 최적화 편에서도 썼지만, 나는 코드 한 줄 잘못 넣었다가 블로그 전체가 흰 화면이 되는 경험을 두 번이나 했다. Site Kit은 플러그인 활성화만 해도 Google 계정 인증 후 GA4와 자동 연결이 된다.</p>
+
+<p>Site Kit 설치는 WordPress 관리자 → 플러그인 → 새 플러그인 추가 → "Site Kit by Google" 검색 순이다. 설치 후 활성화하면 사이드바에 "Site Kit" 메뉴가 생기고, 거기서 "시작하기"를 누르면 Google 계정 인증 흐름이 시작된다. 내 구글 계정으로 로그인하면 어떤 속성에 연결할지 선택하는 화면이 나오는데, 아까 만든 "devyul.com" 속성을 선택하면 된다. 이 과정에서 "Search Console도 연결하겠느냐"고 물어보는데, 이미 Search Console을 연동해둔 상태였기 때문에 같이 연결했다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> Site Kit을 연결하면 WordPress 대시보드에서 GA4 주요 지표(방문자 수, 세션, 이탈률)를 바로 확인할 수 있다. 매번 GA4 사이트를 열 필요가 없어서 편하다.</div>
+
+<p>연동 완료 후 실제 데이터가 GA4에 잡히기 시작하기까지 보통 24~48시간이 걸린다. 급하다면 GA4의 "실시간" 보고서에 들어가서 내 블로그를 직접 열어보면 방문자가 1명으로 뜨는 걸 확인할 수 있다. 나는 이게 신기해서 한참 바라봤다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>초보자라면 Site Kit 플러그인이 정답이다 — functions.php 수정 없이 5분 안에 연동 완료.</p></blockquote>
+
+<hr />
+<h2>데이터가 보여준 충격적인 현실 — 상위 5개 글이 트래픽의 80%</h2>
+
+<p>연동 후 2주가 지났을 때 처음으로 GA4 보고서를 제대로 들여다봤다. 그때 받은 충격을 아직도 기억한다. 당시 내 블로그에는 20편 넘는 글이 있었는데, 그 중 상위 5개 글이 전체 방문자 트래픽의 79.4%를 차지하고 있었다. 나머지 15편이 나누는 트래픽이 채 21%가 안 된다는 뜻이다.</p>
+
+<p>더 충격이었던 건 체류 시간이었다. GA4의 "참여 시간" 지표를 글별로 뽑아보니 패턴이 뚜렷하게 나뉘었다. 체류 시간이 긴 글들은 공통점이 있었다. 코드 예시나 구체적인 숫자가 들어간 글들이었다. "Windows Task Scheduler로 블로그 자동 발행" 같은 글은 평균 4분 30초를 넘겼다. 반면에 체류 시간이 짧은 글들은 전부 두루뭉술한 "후기"나 "총정리" 류였다. 사람들이 검색해서 들어왔다가 "이건 내가 찾던 게 아니야" 싶어서 바로 나가버리는 것이다.</p>
+
+<p>유입 경로도 예상과 달랐다. 나는 Threads 포스팅이 트래픽에 기여하길 기대하고 있었는데, SNS 유입은 전체의 6% 수준이었다. 압도적으로 많은 건 유기 검색(Organic Search)이었고, 그 다음이 직접 유입(Direct)이었다. 즉, 블로그 트래픽의 엔진은 검색이라는 걸 다시 한 번 확인했다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> GA4에서 글별 체류 시간을 보려면 [보고서 → 참여도 → 페이지 및 화면]으로 들어가면 된다. "평균 참여 시간" 열을 기준으로 정렬하면 어떤 글이 실제로 읽히는지 한눈에 보인다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>상위 글 5개가 트래픽 80%를 먹는 것은 이상한 게 아니다 — 이게 블로그의 현실이다. 그 5개의 패턴을 분석하는 게 전략이다.</p></blockquote>
+
+<hr />
+<h2>데이터 보고 실제로 바꾼 것들 — 직관을 버리고 숫자를 따랐다</h2>
+
+<p>GA4 데이터를 보고 나서 세 가지를 바꿨다.</p>
+
+<p>첫 번째는 체류 시간이 1분 미만인 글들을 전수 검토했다. 크게 두 가지 문제가 있었다. 제목과 본문의 괴리, 그리고 두루뭉술한 결론. "블로그 자동화 한 달 총정리"라고 제목을 붙여놓고 막상 글 안에 구체적인 숫자나 설정 방법이 없으면 사람들은 30초 안에 이탈한다. 총정리 글 몇 개를 뜯어고쳐서 구체적인 데이터와 수치를 추가했더니 체류 시간이 눈에 띄게 올라갔다.</p>
+
+<p>두 번째는 새 글 주제 선정 방식을 바꿨다. 이전에는 "오늘 뭘 쓸까" 하고 topics.json을 순서대로 따라갔는데, 이제는 GA4의 검색어 데이터(Search Console 연동 후 GA4에서도 확인 가능)와 현재 상위 글의 연관 키워드를 보면서 주제를 선택한다. 예를 들어 "Python Pillow 썸네일" 글이 잘 된다면, 그 글에서 언급만 하고 끝낸 "이미지 최적화" 주제를 다음 편으로 발전시키는 식이다.</p>
+
+<p>세 번째는 글의 구조를 체류 시간 기준으로 다시 설계했다. 잘 읽히는 글들을 보면 초반 2~3문단에 "이 글 읽으면 뭘 얻을 수 있는지"가 명확하게 나온다. 그리고 중간중간 코드 블록이나 표, 팁 박스가 시선을 붙잡아준다. 밋밋하게 텍스트만 이어지는 글은 모바일에서 특히 금방 이탈된다. WRITING_GUIDE.md에 있는 팁 박스, blockquote, 체크리스트 템플릿이 그냥 꾸미기용이 아니라 체류 시간을 실제로 올려준다는 걸 데이터로 확인했다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>GA4 + Search Console 연동 팁:</strong> Site Kit에서 Search Console을 함께 연결하면 GA4 보고서 안에서 어떤 검색어로 유입됐는지 바로 확인할 수 있다. 단, 데이터가 쌓이기까지 최소 2~3주는 필요하다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>데이터를 보기 전까지는 "내가 열심히 쓴 글이 좋은 글"이라고 착각했다 — GA4는 그 착각을 깨뜨려 주는 도구다.</p></blockquote>
+
+<hr />
+<h2>지금 나의 솔직한 평가 — 3개월 미룬 게 후회된다</h2>
+
+<p>GA4 연동하고 나서 가장 후회되는 건 "왜 더 일찍 안 했지"라는 생각이다. 데이터가 없던 3개월 동안 나는 그냥 감으로 글을 써왔다. 잘 될 것 같은 글이 묻히고, 대충 쓴 글이 트래픽을 긁어오는 상황을 데이터 없이는 파악조차 못 했다.</p>
+
+<p>물론 GA4가 모든 걸 해결해주진 않는다. 데이터를 보는 눈을 기르는 데도 시간이 걸리고, 지표를 잘못 해석하면 오히려 엉뚱한 방향으로 갈 수도 있다. 예를 들어 이탈률만 보고 패닉하면 안 된다. 블로그 글의 특성상 검색 의도를 충족시키고 나가는 것도 이탈로 잡히기 때문에, 체류 시간과 함께 봐야 의미가 있다.</p>
+
+<p>지금은 일주일에 한 번 GA4 대시보드를 들여다보는 루틴이 생겼다. 어떤 글이 오르고 있는지, 어떤 검색어로 들어오는지 체크하고, 그 흐름에 맞춰 다음 편 주제를 조정한다. 자동화 블로그가 "발행만 하면 된다"가 아니라 "발행 + 분석 + 개선"의 루프라는 걸 이제는 안다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>6개월간 실제 수익 공개 (광고, 제휴, 기타)</li>
+<li>가장 크게 실수한 3가지와 지금 다시 한다면 다르게 할 것들</li>
+<li>앞으로 6개월의 자동화 방향 — 무엇을 더 자동화할 것인가</li>
+</ul>
+</div>
