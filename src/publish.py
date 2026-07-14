@@ -87,4 +87,34 @@ CATEGORY_ID_MAP = {
     "AI 자동화 부업": 2,
     "개발 실전 기록": 3,
     "수익화 전략": 4,
+    "PLM 마이그레이션": 28,
 }
+
+# 블로그 태그 체계 (2026-07 정리: 13종 고정 — 새 태그 남발 금지, 이 중에서 선택)
+TAG_ID_MAP = {
+    "블로그 자동화": 15,
+    "Claude API": 16,
+    "AI 부업": 17,
+    "WordPress": 18,
+    "블로그 수익화": 19,
+    "애드센스": 20,
+    "SEO": 21,
+    "API 연동": 22,
+    "트래픽 성장": 23,
+    "Python": 24,
+    "Next.js": 25,
+    "디버깅": 26,
+    "레거시 마이그레이션": 27,
+}
+
+
+def resolve_tag_ids(tag_names: list[str]) -> list[int]:
+    """태그명 리스트를 WP 태그 ID로 변환합니다. 미등록 태그는 경고 후 건너뜁니다."""
+    ids = []
+    for name in tag_names or []:
+        tag_id = TAG_ID_MAP.get(str(name).strip())
+        if tag_id:
+            ids.append(tag_id)
+        else:
+            print(f"      ⚠️ 미등록 태그 무시: {name} (TAG_ID_MAP에 없음)")
+    return ids
