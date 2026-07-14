@@ -16,7 +16,7 @@ from datetime import date
 from pathlib import Path
 
 from notion_logger import log_to_dashboard
-from publish import publish_post
+from publish import publish_post, resolve_tag_ids
 from threads_post import post_to_threads
 
 ROOT = Path(__file__).parent.parent
@@ -79,6 +79,7 @@ def run(draft_path: Path, status: str = "publish", skip_threads: bool = False) -
         seo_title=draft["seo_title"],
         meta_description=draft["meta_description"],
         focus_keyword=draft["focus_keyword"],
+        tags=resolve_tag_ids(draft.get("tags", [])),
     )
     print(f"      완료: {wp_result['url']} (status={wp_result['status']})")
 
