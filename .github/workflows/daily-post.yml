@@ -2,7 +2,7 @@ name: Daily blog post
 
 on:
   schedule:
-    - cron: "3 0 * * *" # 09:03 KST (UTC+9)
+    - cron: "3 0 * * 1,3,5" # 월·수·금 09:03 KST (UTC+9)
   workflow_dispatch: # 수동 실행용 (Actions 탭에서 Run workflow)
 
 permissions:
