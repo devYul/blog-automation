@@ -1,0 +1,12 @@
+{
+  "episode": 31,
+  "title": "블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전",
+  "content_file": "ep31.html",
+  "excerpt": "Threads에 이어 X(Twitter) API v2를 발행 파이프라인에 붙였다. OAuth 1.0a 인증 삽질, 채널마다 다른 URL·글자 수 규칙, 실패해도 발행은 살아남게 만든 격리 구조까지 실전 기록으로 정리했다.",
+  "category": "개발 실전 기록",
+  "category_id": 3,
+  "seo_title": "X(Twitter) API 연동 실전 — 블로그 자동 SNS 공유 만들기",
+  "meta_description": "블로그 발행 파이프라인에 X(Twitter) API v2를 붙인 실전 기록. OAuth 1.0a 인증, Threads와 다른 URL·글자 수 처리, 실패 격리 구조까지 코드와 함께 정리했다.",
+  "focus_keyword": "X API 연동",
+  "threads_text": "Threads만으론 부족했다\n\nX까지 붙이니\n인증 방식: 완전 딴판\nURL 규칙: 정반대\n삽질 시간: 반나절\n\n채널마다 규칙이 달랐다"
+}

@@ -1,0 +1,119 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%9e%90%eb%8f%99%ed%99%94-%ec%bd%94%eb%93%9c-%ec%98%a4%ed%94%88%ec%86%8c%ec%8a%a4%ed%99%94-github-%ea%b3%b5%ea%b0%9c%ec%99%80-%ed%8f%ac%ed%8a%b8%ed%8f%b4/">28편: 블로그 자동화 코드 오픈소스화 — GitHub 공개와 포트폴리오 활용</a></li>
+<li>📌 <a href="https://devyul.com/google-analytics-4-%ec%97%b0%eb%8f%99-%ec%8b%a4%ec%a0%84-%eb%b0%a9%eb%ac%b8%ec%9e%90-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%a1%9c-%ec%bd%98%ed%85%90%ec%b8%a0-%ec%a0%84%eb%9e%b5-%eb%b0%94%ea%be%bc/">29편: Google Analytics 4 연동 실전 — 방문자 데이터로 콘텐츠 전략 바꾼 이야기</a></li>
+<li>📌 <a href="https://devyul.com/ai-%ec%9e%90%eb%8f%99%ed%99%94-%eb%b6%80%ec%97%85-6%ea%b0%9c%ec%9b%94-%ec%b4%9d%ea%b2%b0%ec%82%b0-%ec%88%98%ec%9d%b5-%ec%8b%a4%ec%88%98-%ea%b7%b8%eb%a6%ac%ea%b3%a0-%ec%95%9e%ec%9c%bc/">30편: AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획</a></li>
+<li>📌 <strong>31편: 블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전 (현재 글)</strong></li>
+<li>📌 32편: 자동화 안정성 — GitHub Actions 실패 알림을 Threads로 받기 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/ai-%ec%9e%90%eb%8f%99%ed%99%94-%eb%b6%80%ec%97%85-6%ea%b0%9c%ec%9b%94-%ec%b4%9d%ea%b2%b0%ec%82%b0-%ec%88%98%ec%9d%b5-%ec%8b%a4%ec%88%98-%ea%b7%b8%eb%a6%ac%ea%b3%a0-%ec%95%9e%ec%9c%bc/">30편: AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획</a></p>
+
+<p>30편 총결산에서 "7개월차에는 SNS 채널을 늘리겠다"고 적어놨다. 그 첫 삽이 이번 글이다. 이미 Threads는 자동화돼 있으니 X(Twitter)만 붙이면 되겠지, 하고 가볍게 생각했다. 솔직히 말하면 그게 착각이었다.</p>
+
+<p>Threads 연동은 Meta 그래프 API 하나만 알면 됐는데, X는 인증 방식부터 완전히 다른 세계였다. OAuth 2.0인 줄 알고 시작했다가, 글을 올리는 엔드포인트는 OAuth 1.0a 서명이 필요하다는 걸 뒤늦게 알고 반나절을 날렸다. 이번 글은 그 삽질을 그대로 정리한 실전 기록이다.</p>
+
+<hr />
+<h2>왜 Threads만으로는 부족했나</h2>
+
+<p>Threads 자동화를 붙인 뒤로, 글을 올리면 본문 훅이 Threads에 자동으로 나가고 URL은 댓글로 붙는 구조가 돌아가고 있었다. 문제는 유입이었다. GA4(29편)로 방문자 경로를 보니 Threads에서 넘어오는 트래픽이 생각보다 적었다. 한 채널에만 의존하면 그 채널 알고리즘에 내 유입이 통째로 묶인다는 걸 데이터로 확인한 셈이다.</p>
+
+<p>그래서 같은 글을 여러 채널에 동시에 뿌리는 "멀티 SNS 배포"로 방향을 잡았다. 개발자 독자가 여전히 많은 X를 다음 채널로 골랐다. 목표는 단순했다. 발행 파이프라인 마지막 단계에 X 포스팅을 하나 더 끼워 넣되, X가 실패해도 WordPress 발행과 Threads 포스팅은 그대로 유지되게 하는 것. 6개월간 지켜온 "한 단계가 실패해도 나머지는 산다" 원칙을 여기서도 지키고 싶었다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>한 채널에 유입을 몰아넣지 않는다. SNS 배포는 채널을 늘리는 게 아니라 유입 경로를 분산하는 일이다.</p></blockquote>
+
+<hr />
+<h2>가장 크게 막혔던 지점 — X API 인증 방식</h2>
+
+<p>X API v2 문서를 처음 열었을 때 가장 헷갈린 게 인증이었다. X는 OAuth 2.0(PKCE)과 OAuth 1.0a User Context 두 가지를 동시에 지원하는데, "트윗을 게시"하는 <code>POST /2/tweets</code> 엔드포인트는 사용자를 대신해 쓰는 작업이라 OAuth 1.0a 서명 방식이 가장 간단하게 통했다. OAuth 2.0으로 하려면 리프레시 토큰 갱신 흐름까지 직접 구현해야 해서, 자동화 스크립트 입장에서는 오히려 번거로웠다.</p>
+
+<p>결국 X 개발자 포털에서 앱을 만들고 네 개의 키를 발급받는 것으로 정리했다. API Key, API Secret, Access Token, Access Token Secret. 이 네 값만 있으면 OAuth 1.0a 서명으로 바로 트윗을 올릴 수 있다. Threads가 토큰 하나로 끝났던 것과 비교하면 확실히 진입 장벽이 높았다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>사전 준비:</strong> X 개발자 포털(developer.x.com)에서 앱 생성 → User authentication settings를 Read and Write로 설정 → API Key/Secret과 Access Token/Secret 4종을 발급받아 <code>.env</code>에 저장. requests-oauthlib 설치(<code>pip install requests-oauthlib</code>).</p>
+
+<pre><code class="language-python">import os
+from requests_oauthlib import OAuth1Session
+
+def post_to_x(text: str) -> dict:
+    """X(Twitter) API v2로 트윗 게시. OAuth 1.0a User Context 사용."""
+    oauth = OAuth1Session(
+        os.environ["X_API_KEY"],
+        client_secret=os.environ["X_API_SECRET"],
+        resource_owner_key=os.environ["X_ACCESS_TOKEN"],
+        resource_owner_secret=os.environ["X_ACCESS_TOKEN_SECRET"],
+    )
+    resp = oauth.post(
+        "https://api.twitter.com/2/tweets",
+        json={"text": text},
+    )
+    resp.raise_for_status()
+    return resp.json()["data"]  # {"id": "...", "text": "..."}</code></pre>
+
+<p>처음엔 401 Unauthorized가 계속 떴다. 원인은 앱의 User authentication settings를 Read only로 놔둔 것이었다. Write 권한을 켜고 Access Token을 <strong>다시</strong> 발급받아야 했다. 기존 토큰은 Read 권한만 담고 있어서, 설정만 바꾸고 토큰을 재발급하지 않으면 계속 막힌다. 이거 하나 때문에 두 시간을 헤맸다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>권한 설정을 바꿨으면 토큰을 반드시 재발급해야 한다. 설정과 토큰은 별개다 — 이 한 줄을 몰라서 반나절을 썼다.</p></blockquote>
+
+<hr />
+<h2>Threads와 X는 URL 처리 방식이 다르다</h2>
+
+<p>Threads에 맞춰 짜둔 포스팅 로직을 X에 그대로 복붙했다가 한 번 더 막혔다. Threads는 정책상 본문에 URL을 넣지 않고 URL을 <strong>댓글</strong>로 따로 붙이는 구조라, <code>threads_text</code> 필드에는 URL을 넣지 않는 규칙을 지켜왔다. 그런데 X는 반대다. 트윗 본문에 URL을 넣으면 t.co로 자동 단축되고, 링크 카드까지 붙어서 오히려 클릭을 유도하기 좋다.</p>
+
+<p>그래서 같은 글이라도 채널별로 텍스트를 다르게 만들어야 했다. Threads용은 URL 없는 훅 텍스트, X용은 훅 텍스트 끝에 글 URL을 덧붙인 형태. 이걸 발행 스크립트에서 분기 처리했다. 드래프트의 <code>threads_text</code>를 재활용하되, X로 보낼 때만 URL을 뒤에 이어붙이는 방식이다.</p>
+
+<table style="border-collapse: collapse; width: 100%;" border="1">
+<thead><tr style="background: #f5f5f5;"><th style="padding: 10px;">항목</th><th style="padding: 10px;">Threads</th><th style="padding: 10px;">X(Twitter)</th></tr></thead>
+<tbody>
+<tr><td style="padding: 10px;">인증 방식</td><td style="padding: 10px;">액세스 토큰 1개</td><td style="padding: 10px;">OAuth 1.0a (키 4개)</td></tr>
+<tr><td style="padding: 10px;">본문 URL</td><td style="padding: 10px;">금지 → 댓글로 첨부</td><td style="padding: 10px;">본문에 포함 (t.co 자동 단축)</td></tr>
+<tr><td style="padding: 10px;">글자 수 제한</td><td style="padding: 10px;">500자</td><td style="padding: 10px;">280자 (무료 기준)</td></tr>
+<tr><td style="padding: 10px;">게시 절차</td><td style="padding: 10px;">2단계 (본문 + 댓글)</td><td style="padding: 10px;">1단계 (본문 1회)</td></tr>
+<tr><td style="padding: 10px;">무료 등급 한도</td><td style="padding: 10px;">넉넉함</td><td style="padding: 10px;">월 500 트윗(쓰기)</td></tr>
+</tbody>
+</table>
+
+<p>글자 수도 함정이었다. Threads는 500자까지 되지만 X 무료 등급은 280자다. <code>threads_text</code>를 200자 이내로 써오던 규칙 덕분에 대부분은 문제없이 들어갔지만, URL을 뒤에 붙이면 t.co 단축 링크가 고정 23자를 먹는다는 걸 계산에 넣어야 했다. 그래서 X용 훅은 URL 포함 250자 안쪽으로 잘리게 안전장치를 뒀다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> X의 t.co는 URL 실제 길이와 상관없이 항상 23자로 카운트된다. 본문 글자 수를 계산할 때 URL은 실제 길이가 아니라 23자로 잡아야 280자 제한에 안 걸린다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>같은 글, 다른 채널. SNS 자동화의 핵심은 "한 번 쓰고 여러 곳에 뿌리기"가 아니라 "채널마다 규칙에 맞게 변형해서 뿌리기"였다.</p></blockquote>
+
+<hr />
+<h2>발행 파이프라인에 X를 끼워 넣기 — 실패해도 살아남게</h2>
+
+<p>마지막으로 이 X 포스팅을 기존 발행 파이프라인에 붙였다. <code>publish_draft.py</code>의 <code>run()</code>은 WordPress 발행 → published.json 갱신 → Notion 기록 → Threads 포스팅 순서로 돈다. 여기서 Threads 다음에 X 단계를 하나 더 넣되, X가 실패해도 예외를 던지지 않고 경고만 남기게 감쌌다. Notion·Threads와 똑같은 원칙이다.</p>
+
+<pre><code class="language-python"># run() 파이프라인 마지막 단계에 추가
+result["x"] = None
+try:
+    x_text = build_x_text(draft["threads_text"], wp_result["url"])
+    result["x"] = post_to_x(x_text)
+    print(f"✅ X 포스팅 완료: {result['x']['id']}")
+except Exception as e:
+    # X 실패는 비치명적 — 발행 자체는 이미 성공했으므로 계속 진행
+    print(f"⚠️ X 포스팅 실패(무시): {e}")
+
+return result</code></pre>
+
+<p>이렇게 감싸두면 X API가 401을 뱉든, 무료 등급 월 한도를 초과하든, 이미 끝난 WordPress 발행과 Threads 포스팅에는 아무 영향이 없다. 실제로 테스트 중에 한도 초과 에러가 한 번 났는데, 로그에 경고만 찍히고 나머지는 정상적으로 넘어갔다. 6개월간 이 "단계 격리" 구조 덕을 계속 보고 있다.</p>
+
+<p>정리하면, X 연동에서 진짜 배운 건 API 코드가 아니라 채널마다 규칙이 다르다는 사실이었다. 인증도, URL 처리도, 글자 수도 전부 Threads와 달랐다. 멀티 채널 자동화는 코드를 재사용하는 게 아니라, 공통 데이터(훅 텍스트)를 채널별로 변형하는 얇은 어댑터를 하나씩 붙여가는 일에 가깝다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>X 단계는 실패해도 파이프라인을 멈추지 않는다. 채널을 늘릴수록 "실패 격리"가 더 중요해진다.</p></blockquote>
+
+<hr />
+<h2>지금 상태와 다음 편</h2>
+
+<p>이제 글을 하나 발행하면 WordPress에 올라가고, Threads와 X에 동시에 배포된다. 유입 경로가 두 개로 늘었으니 GA4에서 채널별 트래픽을 비교해볼 수 있게 됐다. 아직 X에서 넘어오는 방문자가 폭발적이진 않지만, 최소한 "한 채널에 묶여 있지 않다"는 안정감은 생겼다.</p>
+
+<p>채널이 늘어날수록 신경 쓰이는 건 실패 알림이다. 지금은 GitHub Actions 로그를 사람이 직접 열어봐야 실패를 안다. 자동화라면서 매일 로그를 확인하는 건 앞뒤가 안 맞는다. 그래서 다음 편에서는 GitHub Actions가 발행에 실패했을 때 그 사실을 Threads(또는 별도 알림 채널)로 자동으로 받아보는 구조를 만든다. 실수를 다음날 아는 게 아니라 그 순간 알게 만드는 게 목표다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: 자동화 안정성 — GitHub Actions 실패 알림을 Threads로 받기</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>GitHub Actions 워크플로우 실패를 감지하는 방법</li>
+<li>실패 순간 알림을 자동으로 받는 파이프라인 구성</li>
+<li>"다음날 알기"에서 "그 순간 알기"로 바꾼 이유</li>
+</ul>
+</div>
