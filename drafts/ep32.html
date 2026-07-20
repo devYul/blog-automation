@@ -1,0 +1,169 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/google-analytics-4-%ec%97%b0%eb%8f%99-%ec%8b%a4%ec%a0%84-%eb%b0%a9%eb%ac%b8%ec%9e%90-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%a1%9c-%ec%bd%98%ed%85%90%ec%b8%a0-%ec%a0%84%eb%9e%b5-%eb%b0%94%ea%be%bc/">29편: Google Analytics 4 연동 실전 — 방문자 데이터로 콘텐츠 전략 바꾼 이야기</a></li>
+<li>📌 <a href="https://devyul.com/ai-%ec%9e%90%eb%8f%99%ed%99%94-%eb%b6%80%ec%97%85-6%ea%b0%9c%ec%9b%94-%ec%b4%9d%ea%b2%b0%ec%82%b0-%ec%88%98%ec%9d%b5-%ec%8b%a4%ec%88%98-%ea%b7%b8%eb%a6%ac%ea%b3%a0-%ec%95%9e%ec%9c%bc/">30편: AI 자동화 부업 6개월 총결산 — 수익, 실수, 그리고 앞으로의 계획</a></li>
+<li>📌 <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ed%8f%ac%ec%8a%a4%ed%8a%b8-%ec%9e%90%eb%8f%99-sns-%ea%b3%b5%ec%9c%a0-xtwitter-api-%ec%97%b0%eb%8f%99-%ec%8b%a4%ec%a0%84/">31편: 블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전</a></li>
+<li>📌 <strong>32편: GitHub Actions로 블로그 완전 자동화 — Claude Code 파이프라인 구축기 (현재 글)</strong></li>
+<li>📌 33편: 자동화 발행 실패 케이스 분석 — 6개월 동안 겪은 실패 로그 정리 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ed%8f%ac%ec%8a%a4%ed%8a%b8-%ec%9e%90%eb%8f%99-sns-%ea%b3%b5%ec%9c%a0-xtwitter-api-%ec%97%b0%eb%8f%99-%ec%8b%a4%ec%a0%84/">31편: 블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전</a></p>
+
+<p>솔직히 말하면, 블로그 자동화를 처음 만들었을 때 나는 로컬 컴퓨터에 너무 많이 의존하고 있었다. ep6에서 Windows Task Scheduler로 발행 스케줄러를 설정했는데, 실제로 써보니 치명적인 한계가 있었다. 컴퓨터가 꺼져 있거나 노트북 뚜껑을 덮으면 작업이 그냥 스킵된다. 주말에 짧은 여행이라도 다녀오면? 그 며칠치 발행은 조용히 누락된다.</p>
+
+<p>처음 몇 번은 "어, 왜 오늘 글이 없지?" 하고 수동으로 돌렸다. 두 번, 세 번 그러고 나서야 이건 자동화가 아니라 반자동화라는 걸 인정했다. 진짜 자동화는 내가 자리에 없어도, 컴퓨터가 꺼져 있어도 돌아가야 한다. 그래서 클라우드 기반 스케줄러로 전환하는 걸 본격적으로 찾기 시작했다.</p>
+
+<p>찾다가 발견한 게 <code>anthropics/claude-code-action</code>이었다. Anthropic이 직접 만든 GitHub Actions 액션인데, 이걸 쓰면 GitHub Actions 러너 위에서 Claude Code가 직접 실행된다. 즉, 클라우드 서버에서 Claude가 코드를 읽고, 글을 쓰고, 발행 스크립트까지 실행하는 게 가능하다. 이 글이 바로 그 파이프라인이 만들어낸 결과물이다.</p>
+
+<hr />
+<h2>로컬 스케줄러의 한계 — 왜 결국 GitHub Actions로 갔나</h2>
+
+<p>ep6에서 Windows Task Scheduler 설정을 마쳤을 때 나름 뿌듯했다. 매일 지정 시간에 Python 스크립트가 실행되고, Claude API를 호출해서 글을 생성하고, WordPress에 자동 발행되는 흐름이었다. 그런데 실제 운영 환경은 이상과 달랐다.</p>
+
+<p>첫 번째 문제는 전원이었다. 노트북 배터리를 아끼려고 뚜껑을 덮어두면 절전 모드가 활성화되고 스케줄러가 돌지 않았다. 전원 설정을 바꿔도 안 자고 켜두는 게 불편했다. 두 번째 문제는 네트워크였다. 공유기가 가끔 재시작되는데 그 타이밍에 스케줄러가 걸리면 WordPress API 호출이 실패하고 그냥 넘어가 버렸다. 세 번째가 가장 치명적이었다. 출장이나 여행으로 집을 비울 때 블로그 자동화가 완전히 멈췄다.</p>
+
+<p>ep23에서 Claude API 직접 호출을 걷어내고 Claude Code로 글쓰기를 전환했는데, 그때부터는 로컬 환경이 더욱 필수가 됐다. Claude Code는 로컬에서 실행되는 CLI 도구니까. 문제가 더 깊어진 셈이었다. 클라우드에서 Claude Code를 돌릴 수 있는 방법이 없을까 찾다가 GitHub Marketplace에서 <code>anthropics/claude-code-action</code>을 발견했다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>로컬 스케줄러는 "내가 자리에 있을 때만 작동하는 자동화"다. 진짜 자동화는 내가 없어도 돌아가야 한다.</p></blockquote>
+
+<hr />
+<h2>anthropics/claude-code-action — 이게 뭘 하는 액션인가</h2>
+
+<p><code>anthropics/claude-code-action@v1</code>은 GitHub Actions 워크플로우 안에서 Claude Code를 실행해주는 공식 액션이다. 쉽게 말하면 "GitHub 서버 위에서 Claude Code CLI를 돌려주는 래퍼"다. 인증 토큰만 넘기면 Claude Code가 Actions 러너 환경에서 그대로 실행된다.</p>
+
+<p>핵심은 <code>prompt</code> 파라미터다. 여기에 Claude Code에게 전달할 지시문을 넣으면 된다. 나는 <code>.github/daily_prompt.md</code> 파일을 읽고 지시를 수행하라는 단 한 줄의 프롬프트를 넘겼다. 실제 글쓰기 지시는 모두 그 markdown 파일 안에 담아두었다.</p>
+
+<p>작동 흐름은 이렇다. GitHub Actions 스케줄러가 러너를 띄운다 → Python 의존성을 설치한다 → claude-code-action이 실행되면서 Claude Code가 프롬프트를 받는다 → Claude Code가 저장소 파일들을 읽고, 글을 쓰고, <code>python src/publish_draft.py</code>를 실행한다 → 발행이 완료되면 <code>git commit &amp;&amp; git push</code>로 변경사항을 저장소에 커밋한다. 모든 과정이 클라우드 서버에서 일어난다. 내 컴퓨터는 꺼져 있어도 상관없다.</p>
+
+<p><code>claude_args</code> 파라미터로 Claude Code에 넘길 옵션도 제어할 수 있다. 현재 이 프로젝트에서는 이렇게 설정했다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>실제 적용 설정:</strong> <code>--model claude-sonnet-4-6 --allowedTools Bash,Read,Write,Edit,Glob,Grep --max-turns 80</code></p>
+
+<p><code>--allowedTools</code>로 Claude Code가 사용할 수 있는 도구를 제한했다. 파일 읽기·쓰기·편집, Bash 실행, 검색만 허용하고 나머지는 막았다. <code>--max-turns 80</code>은 글 작성부터 발행까지 충분한 턴을 확보하기 위해서다. 글쓰기 → 메타 작성 → 발행 → 결과 확인까지 여러 단계가 있어서 기본값보다 넉넉하게 잡았다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>claude-code-action은 Claude Code CLI를 클라우드 서버에서 실행해주는 래퍼다. 로컬 환경 없이 GitHub 서버에서 AI가 글을 쓰고 발행까지 한다.</p></blockquote>
+
+<hr />
+<h2>실제 daily-post.yml 파일 공개 — 핵심 설정 해부</h2>
+
+<p>실제 이 프로젝트에서 사용 중인 워크플로우 파일의 핵심 부분을 공개한다. 여러 번 수정하면서 지금의 형태가 됐다.</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>참고:</strong> 아래 코드는 <code>.github/workflows/daily-post.yml</code> 파일의 실제 내용이다.</p>
+
+<pre><code class="language-yaml">name: Daily blog post
+
+on:
+  schedule:
+    - cron: "3 0 * * 1,3,5"  # 월·수·금 09:03 KST (UTC+9)
+  workflow_dispatch:           # Actions 탭에서 수동 실행 가능
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: daily-post
+  cancel-in-progress: false
+
+jobs:
+  write-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write and publish today's post
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: ".github/daily_prompt.md 파일을 읽고 그 지시를 그대로 수행하라."
+          claude_args: "--model claude-sonnet-4-6 --allowedTools Bash,Read,Write,Edit,Glob,Grep --max-turns 80"
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+
+      - name: Commit publish state
+        run: |
+          git config user.name "devyul-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data drafts
+          git diff --cached --quiet || git commit -m "chore: 발행 기록 업데이트 [skip ci]"
+          git push</code></pre>
+
+<p>몇 가지 설정에서 고민이 있었는데 이유를 정리하면 이렇다.</p>
+
+<p><strong>cron: "3 0 * * 1,3,5"</strong> — 월·수·금 오전 9시 3분(KST)에 실행된다. 매일 발행하면 콘텐츠 품질을 유지하기 어렵다고 판단해서 주 3회로 줄였다. 정각(0분)보다 3분을 선택한 건 GitHub 스케줄러가 정각에 몰리는 트래픽을 피하기 위해서다. 실제로 정각에 설정하면 지연이 생기는 경우가 있다고 문서에 나와 있다.</p>
+
+<p><strong>concurrency: cancel-in-progress: false</strong> — 이미 실행 중인 워크플로우가 있어도 취소하지 않는다. 만약 <code>cancel-in-progress: true</code>로 하면 수동 실행이 스케줄 실행을 취소하거나 그 반대 상황이 생길 수 있다. 발행 중간에 작업이 취소되면 WordPress에는 글이 올라갔는데 published.json은 갱신이 안 되는 최악의 상황이 생긴다. 그래서 진행 중인 건 끝까지 완료하도록 했다.</p>
+
+<p><strong>git add data drafts</strong> — 발행 후 커밋할 때 전체 파일을 스테이징하지 않고 <code>data/</code>와 <code>drafts/</code> 폴더만 올린다. 환경변수가 실수로 .env 파일에 평문으로 남아있을 때 git add . 를 하면 보안 사고가 난다. 발행 이력과 원고 파일만 타깃으로 좁혔다.</p>
+
+<p><strong>[skip ci]</strong> — 커밋 메시지에 이 태그를 붙이지 않으면 커밋 후 워크플로우가 다시 트리거되어 무한루프가 생긴다. GitHub Actions는 push 이벤트를 감지하는데, 워크플로우가 만든 커밋이 다시 워크플로우를 실행시키는 구조다. 처음 이걸 모르고 테스트했다가 Actions 크레딧이 순식간에 날아갔다. 지금은 커밋 메시지에 <code>[skip ci]</code>를 넣어서 자기 자신이 만든 커밋은 무시하도록 했다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>[skip ci] 없이 워크플로우가 커밋을 만들면 무한루프가 발생한다. 이 한 줄이 Actions 크레딧을 지킨다.</p></blockquote>
+
+<hr />
+<h2>실제 삽질 기록 — 설정하면서 겪은 구체적인 문제들</h2>
+
+<p>문서만 보면 단순해 보이지만 실제 적용 과정에서 예상치 못한 문제들이 있었다.</p>
+
+<p><strong>첫 번째 문제: permissions: contents: write 누락</strong></p>
+<p>워크플로우 파일에서 <code>permissions</code> 블록을 빠뜨렸더니 마지막 커밋 단계에서 403 에러가 났다. GitHub Actions의 기본 토큰 권한은 읽기 전용이다. 저장소에 커밋을 푸시하려면 <code>contents: write</code>를 명시적으로 선언해야 한다. 당연히 있겠거니 하고 넘겼다가 한 번 날렸다.</p>
+
+<p><strong>두 번째 문제: timeout-minutes 기본값</strong></p>
+<p>GitHub Actions의 기본 타임아웃은 360분(6시간)이다. Claude Code가 글을 쓰다가 뭔가 잘못되면 6시간 동안 Actions가 점유될 수 있다. 그러면 다음 스케줄 실행도 큐에서 밀린다. <code>timeout-minutes: 30</code>으로 제한해두니 문제가 생겨도 30분 안에 실패로 종료되고 다음 실행이 정상적으로 된다.</p>
+
+<p><strong>세 번째 문제: 환경변수 주입 위치</strong></p>
+<p>WordPress나 Notion에 연결하는 환경변수를 <code>with:</code> 블록이 아니라 <code>env:</code> 블록에 넣어야 한다. 처음에 <code>with:</code>에 넣었더니 Claude Code가 실행하는 Python 스크립트에서 환경변수를 못 읽었다. <code>env:</code> 블록에 선언해야 액션이 실행하는 프로세스(Claude Code)와 그 자식 프로세스(Python 스크립트)까지 전달된다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> GitHub Secrets는 Actions 탭 → 저장소 Settings → Secrets and variables → Actions에서 등록한다. 비밀 값은 로그에서 자동으로 마스킹된다. 실수로 출력해도 <code>***</code>로 가려진다.</div>
+
+<p><strong>네 번째 문제: 중복 발행 가드 필요성</strong></p>
+<p>수동 실행(<code>workflow_dispatch</code>)과 스케줄 실행이 같은 날 겹치면 같은 에피소드가 두 번 발행될 수 있다. 이를 막기 위해 <code>daily_prompt.md</code> 안에 "오늘 날짜로 이미 발행된 항목이 있으면 아무것도 하지 말고 종료"라는 가드 조건을 넣었다. 스크립트도 <code>published.json</code>에서 에피소드 번호 중복을 체크한다. 두 겹으로 방어한다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>삽질은 기록이 재산이다. 겪은 에러들이 지금 워크플로우 파일 곳곳에 녹아 있다.</p></blockquote>
+
+<hr />
+<h2>현재 운영 현황 — GitHub Actions로 발행된 글들</h2>
+
+<p>이 워크플로우를 적용한 이후 <code>data/published.json</code>을 기준으로 현재까지 총 31편이 발행돼 있다. ep24부터 ep31까지가 GitHub Actions 파이프라인으로 발행된 글들이다. 날짜를 보면 2026-07-09부터 2026-07-19까지 공백 없이 이어져 있다.</p>
+
+<p>이 글(ep32)도 같은 파이프라인이 자동으로 실행해서 만든 결과물이다. 지금 이 순간 나는 코드를 건드리지 않았다. GitHub Actions 스케줄러가 오전 9시 3분에 Actions 러너를 띄웠고, Claude Code가 topics.json에서 발행 안 된 다음 에피소드를 확인하고 글을 작성했다. 그리고 Python 스크립트가 WordPress에 발행하고 Notion에 기록하고 Threads에 포스팅했다. 내가 한 일은 workflows 파일을 한 번 세팅한 것과 Secrets에 API 키를 등록한 것뿐이다.</p>
+
+<p>비용 측면에서도 만족스럽다. GitHub Actions는 public 저장소 기준으로 무료다. private 저장소는 월 2000분 무료인데, 한 번 실행에 보통 10~15분이면 끝나니까 주 3회 기준으로 월 120~180분이면 충분하다. Claude Code OAuth 토큰도 Claude Pro 구독에 포함되어 있어서 추가 비용이 없다. 실질적으로 클라우드 자동화 비용이 0원이다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> <code>workflow_dispatch</code> 이벤트를 추가해두면 스케줄 외에 Actions 탭에서 수동으로 즉시 실행할 수 있다. 테스트하거나 빠진 날을 채울 때 유용하다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>published.json에 ep24~ep31이 날짜 공백 없이 쌓인 것이 증거다. 클라우드 자동화로 전환한 이후 단 한 편도 빠지지 않았다.</p></blockquote>
+
+<hr />
+<h2>솔직한 평가 — 완벽하지 않지만 충분히 쓸 만하다</h2>
+
+<p>물론 한계도 있다. Claude Code가 매번 저장소 전체 컨텍스트를 다시 읽어야 하므로 턴 소모가 많다. <code>--max-turns 80</code>을 잡아둔 이유도 그 때문이다. 간혹 복잡한 글 주제라면 80턴이 빡빡할 수 있다. 그리고 Actions 러너는 상태가 없어서(stateless) 매번 새 환경에서 시작한다. Python 의존성 설치에 1~2분이 소요된다.</p>
+
+<p>그래도 로컬 스케줄러로 돌아갈 생각은 전혀 없다. 지금 구조에서 내가 해야 할 일은 Secrets 관리와 가끔 topics.json에 새 주제 추가하는 것 정도다. 나머지는 전부 클라우드에서 돌아간다. "완벽한 시스템보다 일단 돌아가는 것 먼저"라는 내 원칙에 딱 맞는 상태다.</p>
+
+<p>이 구조를 보고 "나도 하고 싶다"고 생각하는 분들이 있다면, 핵심은 세 가지다. 첫째, GitHub 저장소에 Secrets를 등록한다. 둘째, <code>.github/workflows/daily-post.yml</code> 파일을 만들고 <code>anthropics/claude-code-action@v1</code>을 쓴다. 셋째, Claude에게 넘길 프롬프트 파일을 <code>.github/</code> 폴더에 잘 정리해둔다. 세팅에 2~3시간이면 충분하다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: 자동화 발행 실패 케이스 분석 — 6개월 동안 겪은 실패 로그 정리</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>WordPress API 인증 만료로 발행 실패가 생긴 실제 사례</li>
+<li>Threads 토큰 갱신 누락으로 SNS 포스팅이 조용히 빠진 이야기</li>
+<li>published.json과 실제 WordPress 발행 이력이 어긋났던 사건</li>
+<li>각 실패에서 만든 방어 코드와 현재 상태</li>
+</ul>
+</div>

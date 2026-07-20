@@ -1,0 +1,13 @@
+{
+  "episode": 32,
+  "title": "GitHub Actions로 블로그 완전 자동화 — Claude Code가 글 쓰고 발행까지 하는 파이프라인 구축기",
+  "content_file": "ep32.html",
+  "excerpt": "로컬 Task Scheduler를 버리고 GitHub Actions + anthropics/claude-code-action으로 전환한 이유와 실제 daily-post.yml 설정, 삽질 포인트 4가지를 공개한다. 클라우드 자동화 비용은 실질적으로 0원이다.",
+  "category": "개발 실전 기록",
+  "category_id": 3,
+  "seo_title": "GitHub Actions 블로그 자동화 — Claude Code 파이프라인 구축 실전",
+  "meta_description": "로컬 스케줄러를 GitHub Actions로 바꾼 이유, anthropics/claude-code-action 설정법, 무한루프 방지 [skip ci] 팁까지 실제 운영 중인 daily-post.yml을 공개한다.",
+  "focus_keyword": "GitHub Actions 블로그 자동화",
+  "tags": ["블로그 자동화", "Python", "API 연동", "Claude API"],
+  "threads_text": "내 컴퓨터가 꺼져 있어도\n블로그 글이 자동으로 발행됩니다\n\nGitHub Actions + Claude Code 조합\n클라우드에서 AI가 글 쓰고 발행까지\n추가 비용: 0원"
+}

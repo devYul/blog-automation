@@ -161,5 +161,11 @@
     "title": "블로그 포스트 자동 SNS 공유 — X(Twitter) API 연동 실전",
     "url": "https://devyul.com/%eb%b8%94%eb%a1%9c%ea%b7%b8-%ed%8f%ac%ec%8a%a4%ed%8a%b8-%ec%9e%90%eb%8f%99-sns-%ea%b3%b5%ec%9c%a0-xtwitter-api-%ec%97%b0%eb%8f%99-%ec%8b%a4%ec%a0%84/",
     "date": "2026-07-19"
+  },
+  {
+    "ep": 32,
+    "title": "GitHub Actions로 블로그 완전 자동화 — Claude Code가 글 쓰고 발행까지 하는 파이프라인 구축기",
+    "url": "https://devyul.com/github-actions%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%99%84%ec%a0%84-%ec%9e%90%eb%8f%99%ed%99%94-claude-code%ea%b0%80-%ea%b8%80-%ec%93%b0%ea%b3%a0-%eb%b0%9c%ed%96%89%ea%b9%8c%ec%a7%80/",
+    "date": "2026-07-20"
   }
 ]

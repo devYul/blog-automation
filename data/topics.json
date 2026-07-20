@@ -322,5 +322,17 @@
     ],
     "episode": 31,
     "category": "개발 실전 기록"
+  },
+  {
+    "topic": "GitHub Actions로 블로그 완전 자동화 — Claude Code가 글 쓰고 발행까지 하는 파이프라인 구축기",
+    "keywords": [
+      "GitHub Actions 자동화",
+      "claude-code-action",
+      "블로그 자동화 파이프라인",
+      "CI/CD 블로그",
+      "개발자 부업"
+    ],
+    "episode": 32,
+    "category": "개발 실전 기록"
   }
 ]
