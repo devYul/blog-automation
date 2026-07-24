@@ -1,0 +1,142 @@
+<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 16px 20px; margin: 0 0 28px 0;">
+<p style="margin: 0 0 10px 0; font-weight: bold;">📚 이 글은 <strong>"개발자가 AI 자동화로 부업하는 실전 기록"</strong> 시리즈입니다.</p>
+<ul style="margin: 0; padding-left: 20px; line-height: 2;">
+<li>📌 <a href="https://devyul.com/github-actions%eb%a1%9c-%eb%b8%94%eb%a1%9c%ea%b7%b8-%ec%99%84%ec%a0%84-%ec%9e%90%eb%8f%99%ed%99%94-claude-code%ea%b0%80-%ea%b8%80-%ec%93%b0%ea%b3%a0-%eb%b0%9c%ed%96%89%ea%b9%8c%ec%a7%80/">32편: GitHub Actions로 블로그 완전 자동화 — Claude Code가 글 쓰고 발행까지 하는 파이프라인 구축기</a></li>
+<li>📌 <a href="https://devyul.com/%ec%95%a0%eb%93%9c%ec%84%bc%ec%8a%a4-%ea%b0%80%ec%b9%98-%ec%97%86%eb%8a%94-%ec%bd%98%ed%85%90%ec%b8%a0-%ed%8c%90%ec%a0%95-%ec%8b%a4%ec%a0%9c-%ea%b2%bd%ed%97%98%ea%b8%b0-%ec%9e%90/">33편: 애드센스 '가치 없는 콘텐츠' 판정 실제 경험기 — 자동화 블로그 32편 발행하고도 탈락한 이유</a></li>
+<li>📌 <strong>34편: 애드센스 탈락 이후 파이프라인 코드로 품질을 강제하다 (현재 글)</strong></li>
+<li>📌 35편: 새 기준으로 2주 발행한 결과 — 애드센스 재신청 전 자가 점검 <em>(예정)</em></li>
+</ul>
+</div>
+
+<p style="margin: 0 0 24px 0;">← <a href="https://devyul.com/%ec%95%a0%eb%93%9c%ec%84%bc%ec%8a%a4-%ea%b0%80%ec%b9%98-%ec%97%86%eb%8a%94-%ec%bd%98%ed%85%90%ec%b8%a0-%ed%8c%90%ec%a0%95-%ec%8b%a4%ec%a0%9c-%ea%b2%bd%ed%97%98%ea%b8%b0-%ec%9e%90/">33편: 애드센스 '가치 없는 콘텐츠' 판정 실제 경험기</a></p>
+
+<p>33편을 올리고 나서 며칠을 생각했다. 33편이나 쌓았는데 탈락했다는 것, 그리고 그 이유가 "콘텐츠 품질"이라는 것. 다음에 어떻게 해야 할지.</p>
+
+<p>사실 처음 든 생각은 "좀 더 잘 쓰면 되겠지"였다. 그런데 그 다음 생각이 더 솔직했다. 나는 이걸 자동화로 운영하고 있다. AI에게 "다음부턴 잘 써"라고 다짐을 받는 건 아무 의미가 없다. 다짐은 사람이 하는 것이고, 자동화 파이프라인에는 규칙이 필요하다.</p>
+
+<p>그래서 나는 코드와 설정 파일을 열었다. 의지가 아니라 시스템으로 바꿀 수 있는 것들을 찾기 시작했다.</p>
+
+<hr />
+<h2>태그 난립이 만들고 있던 문제</h2>
+
+<p>파이프라인을 점검하다가 가장 먼저 발견한 문제가 태그였다. WordPress 관리자 화면에서 태그 목록을 열었더니 내가 예상했던 것보다 훨씬 많은 태그들이 있었다. "블로그 자동화", "블로그자동화", "블로그-자동화", "WordPress 자동화", "워드프레스 자동화"처럼 사실상 같은 의미인데 각각 다른 태그로 등록된 것들이 수두룩했다.</p>
+
+<p>이 문제가 생긴 이유는 간단했다. 초기 자동화 코드에서는 태그를 자유롭게 생성할 수 있었다. 발행 스크립트가 글의 JSON 메타 파일에 tags 배열이 있으면 그냥 WordPress에 POST 요청을 날렸고, WordPress는 없는 태그면 새로 만들어버렸다. Claude Code가 매번 조금씩 다른 키워드로 태그를 넣다 보니 유사한 태그들이 계속 쌓였다.</p>
+
+<p>검색엔진 입장에서 태그 난립은 중복 콘텐츠 문제로 이어진다. 각 태그 페이지가 거의 같은 글들을 가리키게 되고, 거기다 태그 페이지 자체의 SEO 가중치가 분산된다. 애드센스 심사 기준에 직접적인 영향이 있는지는 모르겠지만, 사이트 구조가 지저분해지는 것만큼은 분명했다.</p>
+
+<p>그래서 2026년 7월에 태그를 13개로 완전히 고정했다. 실제 publish.py 코드에 이렇게 들어가 있다:</p>
+
+<p style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 10px 16px; margin: 16px 0;">⚙️ <strong>참고:</strong> 아래 코드는 src/publish.py에 실제로 존재하는 TAG_ID_MAP 일부입니다. WordPress 태그 ID와 이름이 1:1로 고정 매핑되어 있습니다.</p>
+
+<pre><code class="language-python"># 블로그 태그 체계 (2026-07 정리: 13종 고정 — 새 태그 남발 금지, 이 중에서 선택)
+TAG_ID_MAP = {
+    "블로그 자동화": 15,
+    "Claude API": 16,
+    "AI 부업": 17,
+    "WordPress": 18,
+    "블로그 수익화": 19,
+    "애드센스": 20,
+    "SEO": 21,
+    "API 연동": 22,
+    "트래픽 성장": 23,
+    "Python": 24,
+    "Next.js": 25,
+    "디버깅": 26,
+    "레거시 마이그레이션": 27,
+}</code></pre>
+
+<p>그리고 이 맵에 없는 태그를 넣으면 이렇게 처리된다:</p>
+
+<pre><code class="language-python">def resolve_tag_ids(tag_names: list[str]) -> list[int]:
+    ids = []
+    for name in tag_names or []:
+        tag_id = TAG_ID_MAP.get(str(name).strip())
+        if tag_id:
+            ids.append(tag_id)
+        else:
+            print(f"      ⚠️ 미등록 태그 무시: {name} (TAG_ID_MAP에 없음)")
+    return ids</code></pre>
+
+<p>미등록 태그는 경고 메시지만 출력하고 조용히 무시된다. WordPress에 새 태그가 생성되지 않는다. 발행 자체는 계속된다. 이게 맞는 동작이다. 태그 문제로 발행이 실패하는 것보다, 태그 없이 발행하는 편이 낫다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>태그 시스템 고정화는 작은 변경이지만, 6개월 동안 쌓인 태그 혼란의 원인을 차단하는 실질적인 조치였다.</p></blockquote>
+
+<hr />
+<h2>Claude Code에 주는 지시문을 다시 썼다</h2>
+
+<p>태그 문제보다 더 근본적인 문제는 글쓰기 지시문이었다. 나는 Claude Code에게 글을 쓸 때 두 가지 파일로 지침을 준다. 하나는 페르소나·스타일·HTML 템플릿을 담은 WRITING_GUIDE.md이고, 다른 하나는 매일 실행될 때 받는 daily_prompt.md다.</p>
+
+<p>기존 지시문의 문제는 "이렇게 써라"는 있었지만 "이런 건 쓰지 마라"가 없었다는 것이다. 스타일 가이드는 있었지만 금지 조건이 없었다. 그러니까 AI가 "워드프레스로 블로그 자동화하는 법 — 초보자 가이드" 같은 제목의 글을 아무 거리낌 없이 썼다. 형식은 맞고 분량도 채웠지만, 구글에서 열 개는 나오는 일반론 글이었다.</p>
+
+<p>이번에 추가한 금지 조건은 네 가지다:</p>
+
+<ul>
+<li>✅ <strong>일반론 하우투 금지</strong>: 글의 중심은 반드시 이 저장소와 이 블로그에서 실제로 있었던 일이어야 한다. 실제 코드 변경, 실제 에러와 해결, published.json에 쌓인 실제 발행 데이터, 운영 중 실제로 내린 결정과 이유.</li>
+<li>✅ <strong>실측 근거 최소 1개 필수</strong>: 실제 수치, 실제 로그·에러 메시지, 이 저장소의 실제 코드 조각 중 하나 이상. 가상의 수치나 사례를 지어내는 것은 금지. 근거를 댈 수 없는 주제라면 근거가 있는 주제로 바꾼다.</li>
+<li>✅ <strong>재탕 금지</strong>: published.json의 기존 발행 이력과 겹치는 주제의 재구성·확장판을 만들지 않는다.</li>
+<li>✅ <strong>제목은 본문이 증명할 수 있는 것만 약속한다</strong>: 과장·낚시성 제목 금지.</li>
+</ul>
+
+<p>사실 이 기준들은 좋은 글의 기본 조건이기도 하다. 그런데 이걸 지시문에 명시하기 전까지는, AI가 이 기준을 지켜야 한다는 걸 알 방법이 없었다. 명시되지 않은 기준은 존재하지 않는 기준이다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> Claude Code에게 글쓰기 시스템 프롬프트를 줄 때, "무엇을 써라"만큼 "무엇을 쓰지 마라"도 중요하다. 특히 자동화 환경에서는 금지 조건이 없으면 가장 무난한(=가장 일반적인) 결과물이 나온다.</div>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>좋은 자동화는 좋은 규칙에서 나온다. 규칙이 없으면 자동화는 가장 평범한 결과물을 가장 효율적으로 만든다.</p></blockquote>
+
+<hr />
+<h2>published.json으로 33편 실제 발행 이력을 돌아보다</h2>
+
+<p>품질 기준을 강화하면서 published.json도 다시 꼼꼼히 들여다봤다. 33편의 발행 이력이 거기 있다. 몇 가지 사실이 눈에 들어왔다.</p>
+
+<p>첫째, ep1부터 ep28까지는 대부분 date 필드가 없다. 초기에 발행 스크립트에서 날짜를 기록하지 않았기 때문이다. ep29(2026-07-15)부터 날짜가 기록되기 시작했다. 이 작은 데이터 문제도 나중에 발행 이력을 분석하려 할 때 걸림돌이 될 수 있다.</p>
+
+<p>둘째, 최근 발행 속도를 보면: ep29(07-15), ep30(07-17), ep31(07-19), ep32(07-20), ep33(07-22). 8일 동안 5편을 발행했다. 평균 1.6일에 한 편 꼴이다. 목표였던 "매일 발행"에 꽤 가까이 와 있다.</p>
+
+<p>그런데 여기서 문제가 있다. 빠른 발행 속도가 SEO에 유리하기도 하지만, 퀄리티와 속도는 트레이드오프 관계다. 특히 AI 자동화 글쓰기에서는 이 트레이드오프가 심해진다. AI는 빠르게 쓸수록 더 일반적인 내용을 쓰는 경향이 있다. 구체적인 맥락을 찾고 실측 근거를 발굴하는 과정이 시간이 걸리기 때문이다.</p>
+
+<p>애드센스가 지적한 "가치가 별로 없는 콘텐츠"는 바로 이 속도 우선 글쓰기의 결과였을 것이다. 빠르게, 형식에 맞게, 분량을 채워서 발행했지만, 독자가 이 블로그에서만 얻을 수 있는 정보는 없었다는 뜻이다.</p>
+
+<p>이번 조치 이후로는 발행 속도보다 각 글의 실측 근거가 더 중요해졌다. 실제로 일어난 일, 실제 코드, 실제 데이터가 없으면 그 주제는 건너뛴다. 이 글 자체가 그 기준을 처음 적용한 첫 번째 사례다.</p>
+
+<blockquote style="border-left: 4px solid #0073aa; padding: 12px 20px; margin: 20px 0; background: #f9f9f9; font-style: italic;"><p>33편의 발행 이력이 알려준 것: 편수보다 각 편의 독자적인 가치가 중요하다. 그리고 그 가치는 실측 근거에서 온다.</p></blockquote>
+
+<hr />
+<h2>발행 파이프라인의 검증 로직도 점검했다</h2>
+
+<p>코드를 열었을 때, publish_draft.py에 이미 기본적인 검증 로직이 있다는 걸 다시 확인했다. REQUIRED_FIELDS라는 리스트가 있어서, 필수 메타 필드가 빠진 글은 발행 자체가 되지 않는다.</p>
+
+<pre><code class="language-python">REQUIRED_FIELDS = ["episode", "title", "excerpt", "category", "category_id",
+                   "seo_title", "meta_description", "focus_keyword", "threads_text"]</code></pre>
+
+<p>9개 필드가 모두 있어야 발행이 진행된다. 그 중에 focus_keyword(SEO 핵심 키워드), seo_title(60자 이내 SEO 제목), meta_description(120~155자 메타 설명)이 포함되어 있다는 게 중요하다. Yoast SEO가 요구하는 메타 필드들이 자동화 파이프라인에서도 강제로 채워지도록 되어 있다.</p>
+
+<p>물론 이 검증이 콘텐츠 품질까지 보장하진 않는다. 형식적인 필드가 채워져 있다고 해서 글의 내용이 좋다는 뜻은 아니니까. 하지만 SEO 최적화의 기본 요건이 빠지는 실수는 막아준다. 이런 레이어의 검증들이 쌓여서 파이프라인의 신뢰도를 높인다.</p>
+
+<div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 20px; margin: 20px 0;">💡 <strong>팁:</strong> 자동화 파이프라인에서 검증 로직은 "실패를 막는 코드"다. 형식 검증은 최소한이고, 진짜 품질 검증은 사람이(또는 AI에게 주는 좋은 지시문이) 담당해야 한다.</div>
+
+<hr />
+<h2>솔직한 현재 평가와 앞으로의 계획</h2>
+
+<p>이번 개선 작업을 정리하면:</p>
+
+<ul>
+<li>✅ 태그 시스템: 13개로 고정, 미등록 태그는 경고 후 무시</li>
+<li>✅ 글쓰기 지시문: 일반론 금지·실측 근거 필수·재탕 금지 조건 추가</li>
+<li>✅ 발행 검증: REQUIRED_FIELDS 9개 필수 체크 (기존부터 있던 것 확인)</li>
+</ul>
+
+<p>아직 애드센스 재신청은 하지 않았다. 솔직히 지금 당장 재신청해도 탈락할 것 같다는 생각이 든다. 새 기준을 적용한 글이 아직 이 편뿐이라서다. 최소 10편 정도를 새 기준으로 채우고 나서, 발행된 글들을 직접 읽어보고 판단하려고 한다.</p>
+
+<p>개발자로서 이 경험에서 얻은 가장 큰 교훈은 이거다. 자동화는 규칙을 자동으로 실행해줄 뿐이지, 좋은 결과물을 자동으로 만들어주지 않는다. 좋은 결과물을 원한다면 좋은 규칙이 먼저다. 그리고 그 규칙은 코드와 지시문 두 곳 모두에 명시되어야 한다.</p>
+
+<p>33편을 쓰면서 그 규칙이 없었다는 걸 애드센스가 알려줬다. 이제 규칙을 바꿨다. 결과는 다음 편들에서 확인할 것이다.</p>
+
+<div style="background: #f0f4ff; border-left: 4px solid #3b5bdb; padding: 14px 20px; margin: 20px 0;">
+<p>📌 <strong>다음 편: 새 기준으로 2주 발행한 결과 — 애드센스 재신청 전 자가 점검</strong></p>
+<ul style="margin: 8px 0 0 0; padding-left: 18px; line-height: 1.9;">
+<li>새 글쓰기 기준을 적용한 첫 10편을 직접 읽고 평가한 결과</li>
+<li>애드센스 재신청 여부와 타이밍 결정 과정</li>
+<li>published.json 데이터로 보는 발행 패턴 변화</li>
+</ul>
+</div>
